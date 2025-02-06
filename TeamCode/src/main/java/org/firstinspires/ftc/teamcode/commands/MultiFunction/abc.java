@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.commands.Elevator.ElevatorHighSpecimen;
  * releases a stone, and then drives backward.
  */
 public class abc extends SequentialCommandGroup {
-    public abc(Elevator linear){
+    /*public abc(Elevator linear){
         super(
                 new ClawOpen(linear),
                 new rota(),
@@ -21,5 +21,5 @@ public class abc extends SequentialCommandGroup {
 
 
     }
-
+*/
 }

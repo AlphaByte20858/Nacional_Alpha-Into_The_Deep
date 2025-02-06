@@ -13,20 +13,28 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "Bankai minazuki kageyoshi")
+@TeleOp(name = "molhadinhos")
 public class TeleOpDoxCria extends OpMode {
-    DcMotorEx MDT, MDF, MET, MEF, LSi, LSii, braço, roboAng;
+    DcMotorEx MDT, MDF, MET, MEF, LSi, LSii, braço;
     double axial, lateral, yaw,angle;
     Servo yawC, garra; //Define o nome dos servos no sistema
     boolean yawG, raw;
     ElapsedTime f = new ElapsedTime(); //define contador de tempo para as funções
     ElapsedTime tempo = new ElapsedTime(); // define  o contador do tempo decorrido para o PID
+
     IMU imu;
     public void init() {
         MET = hardwareMap.get(DcMotorEx.class, "MET");
         MDT = hardwareMap.get(DcMotorEx.class, "MDT");
         MDF = hardwareMap.get(DcMotorEx.class, "MDF");
         MEF = hardwareMap.get(DcMotorEx.class, "MEF");
+        LSi = hardwareMap.get(DcMotorEx.class, "LSi");
+        LSii = hardwareMap.get(DcMotorEx.class, "LSii");
+        yawC = hardwareMap.get(Servo.class, "yawC");
+        garra = hardwareMap.get(Servo.class, "garra");
+        braço = hardwareMap.get(DcMotorEx.class, "braço");
+        imu = hardwareMap.get(IMU.class, "imu");
+
 
         MDF.setDirection(DcMotorSimple.Direction.FORWARD);
         MDT.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -39,31 +47,22 @@ public class TeleOpDoxCria extends OpMode {
         MET.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         MEF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-
         MDF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         MDT.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         MET.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         MEF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        imu = hardwareMap.get(IMU.class, "imu");
         // Orientação do Control Hub/Expansion Hub
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
         // Inicializa o giroscópio
         imu.initialize(new IMU.Parameters(orientationOnRobot));
-        LSi = hardwareMap.get(DcMotorEx.class, "LSi");
-        LSii = hardwareMap.get(DcMotorEx.class, "LSii");
-        yawC = hardwareMap.get(Servo.class, "yawC");
-        garra = hardwareMap.get(Servo.class, "garra");
-        braço = hardwareMap.get(DcMotorEx.class, "braço");
-        roboAng = hardwareMap.get(DcMotorEx.class, "roboAng");
         imu.resetYaw();
         LSi.setDirection(DcMotorSimple.Direction.REVERSE);
         braço.setDirection(DcMotorSimple.Direction.REVERSE);
-        roboAng.setDirection(DcMotorSimple.Direction.REVERSE);
         yawC.setPosition(0);
-        garra.setPosition(0);
+        garra.setPosition(0.15);
         yawG = false;
         raw = true;
 
@@ -115,7 +114,7 @@ public class TeleOpDoxCria extends OpMode {
         MDT.setPower(p4);
     }
     /*ADD depois das correções
-    private void fieldOriented(double driveP, double turnP) {
+    private void çfieldOriented(double driveP, double turnP) {
         angle = gyroCalculate();
         axial = driveP * Math.cos(angle) - turnP * Math.sin(angle);
         lateral = driveP * Math.sin(angle) + turnP * Math.cos(angle);
@@ -158,18 +157,6 @@ public class TeleOpDoxCria extends OpMode {
         //funções do linear
         LSi.setPower(gamepad2.right_trigger - gamepad2.left_trigger);
         LSii.setPower(gamepad2.right_trigger - gamepad2.left_trigger);
-
-        //motor que angula o robô para o climb
-        if (gamepad2.dpad_up){
-            roboAng.setPower(0.4);
-        }
-        else if (gamepad2.dpad_down) {
-            roboAng.setPower(0.4);
-        }
-        else {
-            roboAng.setPower(0);
-        }
-
         telemetry.addData("Linear", LSi.getCurrentPosition());
     }
 

@@ -7,7 +7,7 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.command.CommandBase;
 
-import org.firstinspires.ftc.teamcode.odometry.MecanumDrive;
+import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
 public class rota extends CommandBase {
     public rota() {
