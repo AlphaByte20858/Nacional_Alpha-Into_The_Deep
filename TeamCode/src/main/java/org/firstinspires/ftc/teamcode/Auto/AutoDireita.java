@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.message.redux.StopOpMode;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -18,13 +16,38 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
-import org.opencv.core.Mat;
 
-@Autonomous (name = "Auto Tensa Zangetsu!!1!")
-public class TestesAuto extends LinearOpMode {
+@Autonomous (name = "AutoOficial", group = "LinearOpMode")
+public class AutoDireita extends LinearOpMode {
+    DcMotorEx MEF, MET, MDF, MDT, braço, LSi, LSii;
+    Servo garra, yawC;
     IMU imu;
 
     public void runOpMode(){
+
+        MEF = hardwareMap.get(DcMotorEx.class, "MEF");
+        MET = hardwareMap.get(DcMotorEx.class, "MET");
+        MDF = hardwareMap.get(DcMotorEx.class, "MDF");
+        MDT = hardwareMap.get(DcMotorEx.class, "MDT");
+        braço = hardwareMap.get(DcMotorEx.class, "braço");
+        LSi = hardwareMap.get(DcMotorEx.class, "LSi");
+        LSii = hardwareMap.get(DcMotorEx.class, "LSii");
+        yawC = hardwareMap.get(Servo.class, "yawC");
+        garra = hardwareMap.get(Servo.class, "garra");
+
+        MDF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        MDT.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        MET.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        MEF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        braço.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        MDF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        MDT.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        MET.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        MEF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        braço.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        LSii.setDirection(DcMotorSimple.Direction.REVERSE);
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
@@ -43,17 +66,31 @@ public class TestesAuto extends LinearOpMode {
                 .build();
 
         splineiii = peixinho.actionBuilder(new Pose2d(0,0, Math.toRadians(0)))
-                .splineToLinearHeading(new Pose2d(40, -3, Math.toRadians(90)), Math.toRadians(90))
+                .splineTo(new Vector2d(34, -3), Math.toRadians(180))
                 .build();
 
 
+        garra.setPosition(0.15);
+        yawC.setPosition(0);
+        braço.setPower(-0.7);
+
         waitForStart();
+        lineares(0.45);
         Actions.runBlocking(new SequentialAction(
                 splinei
         ));
+        lineares(0.8);
         sleep(500);
+        garra.setPosition(0);
+        lineares(0);
+        braço.setPower(0);
         sleep(400);
         Actions.runBlocking(new SequentialAction(
-                splineii, splineiii));
+                splineii
+        ));
+    }
+    public void lineares(double valorMotor){
+        LSi.setPower(valorMotor);
+        LSii.setPower(valorMotor);
     }
 }

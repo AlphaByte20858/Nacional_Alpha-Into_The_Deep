@@ -59,7 +59,7 @@ public class TeleOpDoxCria extends OpMode {
         // Inicializa o giroscópio
         imu.initialize(new IMU.Parameters(orientationOnRobot));
         imu.resetYaw();
-        LSi.setDirection(DcMotorSimple.Direction.REVERSE);
+        LSii.setDirection(DcMotorSimple.Direction.REVERSE);
         braço.setDirection(DcMotorSimple.Direction.REVERSE);
         yawC.setPosition(0);
         garra.setPosition(0.15);
@@ -82,7 +82,7 @@ public class TeleOpDoxCria extends OpMode {
     }
 
     public void loop(){
-        axial   = (gamepad1.left_trigger - gamepad1.right_trigger)* 0.8;
+        axial   = (gamepad1.right_trigger - gamepad1.left_trigger)* 0.8;
         lateral = gamepad1.left_stick_x * 0.8;
         yaw     =  gamepad1.right_stick_x * 0.6;
 
