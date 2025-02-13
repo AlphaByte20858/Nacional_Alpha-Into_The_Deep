@@ -31,29 +31,42 @@ public class TestesAuto extends LinearOpMode {
 
         MecanumDrive peixinho = new MecanumDrive(hardwareMap, new Pose2d(0,0, Math.toRadians(0)));
 
-        Action splinei, splineii, splineiii, linearA;
+        Action splinei, splineii, ajeita, samplei;
 
         splinei = peixinho.actionBuilder(new Pose2d(0,0, Math.toRadians(0)))
-                .splineTo(new Vector2d(31,34), Math.toRadians(0))
+                .splineTo(new Vector2d(28,34), Math.toRadians(0))
                 .build();
 
-        splineii = peixinho.actionBuilder(new Pose2d(0,0, Math.toRadians(0)))
-                .splineTo(new Vector2d(24, 5), Math.toRadians(0))
+        splineii = peixinho.actionBuilder(new Pose2d(20,34, Math.toRadians(0)))
+                .splineTo(new Vector2d(24, 3), Math.toRadians(-90))
                 .waitSeconds(0.4)
                 .build();
 
-        splineiii = peixinho.actionBuilder(new Pose2d(0,0, Math.toRadians(0)))
-                .splineToLinearHeading(new Pose2d(40, -3, Math.toRadians(90)), Math.toRadians(90))
+        ajeita = peixinho.actionBuilder(new Pose2d(24,3, Math.toRadians(-90)))
+                .strafeTo(new Vector2d(46, 3))
+                .strafeTo(new Vector2d(46, -8))
+                .strafeToConstantHeading(new Vector2d(10, -8))
+                .splineToConstantHeading(new Vector2d(46, -12), Math.toRadians(-90))
                 .build();
 
 
+        samplei = peixinho.actionBuilder(new Pose2d(46, -12, Math.toRadians(-90)))
+                .splineToConstantHeading(new Vector2d(10, -17), Math.toRadians(-90))
+                .turnTo(Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(28, 34, Math.toRadians(0)), Math.toRadians(0))
+                .build();
+
         waitForStart();
-        Actions.runBlocking(new SequentialAction(
+        Actions.runBlocking(
                 splinei
-        ));
+        );
+
         sleep(500);
         sleep(400);
         Actions.runBlocking(new SequentialAction(
-                splineii, splineiii));
+                splineii,
+                ajeita,
+                samplei
+        ));
     }
 }
