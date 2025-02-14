@@ -38,7 +38,7 @@ public class ElevatorSubsystem extends OpMode {
         robot.LSii.setPower(target);
         pidPower = controller.calculate(encoderPosition,target);
         robot.LSi.setPower(pidPower);
-        robot.LSii.setPower(pidPower);
+        robot.LSii.setPower(pidPower);  
         telemetry.addData("posição", encoderPosition);
         telemetry.addData("target", target);
         telemetry.update();
