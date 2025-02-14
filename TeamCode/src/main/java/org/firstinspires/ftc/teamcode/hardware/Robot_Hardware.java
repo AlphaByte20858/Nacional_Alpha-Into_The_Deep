@@ -54,11 +54,9 @@ public class Robot_Hardware {
         yawC = hardwareMap.get(Servo.class, "yawC");
         garra = hardwareMap.get(Servo.class, "garra");
         braço = hardwareMap.get(DcMotorEx.class, "braço");
-        roboAng = hardwareMap.get(DcMotorEx.class, "roboAng");
         imu.resetYaw();
         LSi.setDirection(DcMotorSimple.Direction.REVERSE);
         braço.setDirection(DcMotorSimple.Direction.REVERSE);
-        roboAng.setDirection(DcMotorSimple.Direction.REVERSE);
         yawC.setPosition(0);
         garra.setPosition(0);
         yawG = false;

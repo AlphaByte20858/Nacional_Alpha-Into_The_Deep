@@ -1,48 +1,61 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.hardware.Constraints.ElevatorConstraints;
 
-@Disabled
-public class ElevatorSubsystem extends SubsystemBase {
+@Config
+@TeleOp(name = "ElevatorPID")
+public class ElevatorSubsystem extends OpMode {
     /// definindo os motores do Elevador ///
-    DcMotor rightMotor,leftMotor;
-    ElevatorConstraints linear = new ElevatorConstraints();
-    PIDController controller;
+    Robot_Hardware robot = new Robot_Hardware();
     int encoderPosition;
     double pidPower;
+    private PIDController controller;
+    public static double p = 0, i = 0, d = 0;
 
-
-    /// criando o construtor do sistema de Elevator///
-    public ElevatorSubsystem(){
-        this.rightMotor = Robot_Hardware.getInstance().LSi;
-        this.leftMotor = Robot_Hardware.getInstance().LSii;
-
-        this.rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+    public static int target = 0;
+    @Override
+    public void init() {
+        robot.init(hardwareMap);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        controller = new PIDController(p,i,d);
         /// variáveis para o PID
-        controller = new PIDController(linear.kp,linear.ki,linear.kd);
-        encoderPosition = Integer.parseInt(String.valueOf((rightMotor.getCurrentPosition() + leftMotor.getCurrentPosition())/2));
+
+
+    }
+    public void loop(){
+        encoderPosition = -((robot.LSi.getCurrentPosition() + robot.LSii.getCurrentPosition())/10);
+        robot.LSi.setPower(target);
+        robot.LSii.setPower(target);
+        pidPower = controller.calculate(encoderPosition,target);
+        robot.LSi.setPower(pidPower);
+        robot.LSii.setPower(pidPower);
+        telemetry.addData("posição", encoderPosition);
+        telemetry.addData("target", target);
+        telemetry.update();
     }
 
     public void manualControl(float upButton, float downButton) {
-        rightMotor.setPower(upButton - downButton);
-        leftMotor.setPower(upButton - downButton);
+        robot.LSi.setPower(upButton - downButton);
+        robot.LSii.setPower(upButton - downButton);
     }
 
     public void pidManualControl(float upButton, float downButton){
         double position;
         int lastPosition = 0;
-        rightMotor.setPower(upButton - downButton * 0.7);
-        leftMotor.setPower(upButton - downButton * 0.7);
-        encoderPosition = Integer.parseInt(String.valueOf((rightMotor.getCurrentPosition() + leftMotor.getCurrentPosition())/2));
-        if (rightMotor.getPower() == 0 && leftMotor.getPower() == 0){
+        robot.LSi.setPower(upButton - downButton * 0.7);
+        robot.LSii.setPower(upButton - downButton * 0.7);
+        encoderPosition = (robot.LSi.getCurrentPosition() + robot.LSii.getCurrentPosition());
+        if (robot.LSi.getPower() == 0 && robot.LSii.getPower() == 0){
             pidTarget(lastPosition);
         }
         else{
@@ -50,10 +63,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         }
     }
     public void pidTarget(int target){
-        encoderPosition = Integer.parseInt(String.valueOf((rightMotor.getCurrentPosition() + leftMotor.getCurrentPosition())/2));
+        encoderPosition = (robot.LSi.getCurrentPosition() + robot.LSii.getCurrentPosition());
         pidPower = controller.calculate(encoderPosition,target);
-        rightMotor.setPower(pidPower);
-        leftMotor.setPower(pidPower);
+        robot.LSi.setPower(pidPower);
+        robot.LSii.setPower(pidPower);
     }
 
 }

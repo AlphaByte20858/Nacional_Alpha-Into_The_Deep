@@ -15,8 +15,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.hardware.ArmPIDF;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.opencv.core.Mat;
 
@@ -25,7 +27,6 @@ public class TestesAuto extends LinearOpMode {
     IMU imu;
 
     public void runOpMode(){
-
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
@@ -35,23 +36,12 @@ public class TestesAuto extends LinearOpMode {
 
         splinei = peixinho.actionBuilder(new Pose2d(0,0, Math.toRadians(0)))
                 .splineTo(new Vector2d(28,34), Math.toRadians(0))
-                .build();
-
-        splineii = peixinho.actionBuilder(new Pose2d(20,34, Math.toRadians(0)))
-                .splineTo(new Vector2d(24, 3), Math.toRadians(-90))
+                .splineTo(new Vector2d(20, 3), Math.toRadians(-90))
                 .waitSeconds(0.4)
-                .build();
-
-        ajeita = peixinho.actionBuilder(new Pose2d(24,3, Math.toRadians(-90)))
-                .strafeTo(new Vector2d(46, 3))
-                .strafeTo(new Vector2d(46, -8))
+                .splineTo(new Vector2d(45, -8), Math.toRadians(-90))
                 .strafeToConstantHeading(new Vector2d(10, -8))
-                .splineToConstantHeading(new Vector2d(46, -12), Math.toRadians(-90))
-                .build();
-
-
-        samplei = peixinho.actionBuilder(new Pose2d(46, -12, Math.toRadians(-90)))
-                .splineToConstantHeading(new Vector2d(10, -17), Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(46, -14), Math.toRadians(-180))
+                .splineToConstantHeading(new Vector2d(10, -17), Math.toRadians(-180))
                 .turnTo(Math.toRadians(90))
                 .splineToLinearHeading(new Pose2d(28, 34, Math.toRadians(0)), Math.toRadians(0))
                 .build();
@@ -61,12 +51,6 @@ public class TestesAuto extends LinearOpMode {
                 splinei
         );
 
-        sleep(500);
-        sleep(400);
-        Actions.runBlocking(new SequentialAction(
-                splineii,
-                ajeita,
-                samplei
-        ));
+
     }
 }
