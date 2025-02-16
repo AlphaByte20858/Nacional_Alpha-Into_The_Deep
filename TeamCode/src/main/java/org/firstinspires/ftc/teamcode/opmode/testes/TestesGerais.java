@@ -4,8 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.teamcode.hardware.ArmPIDF;
-
 @Autonomous
 public class TestesGerais extends LinearOpMode {
     @Override
@@ -18,4 +16,5 @@ public class TestesGerais extends LinearOpMode {
 
         telemetry.addData("força", power);
     }
+
 }

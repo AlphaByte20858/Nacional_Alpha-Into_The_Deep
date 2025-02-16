@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auto;
+package org.firstinspires.ftc.teamcode.opmode.autos;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -15,9 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.hardware.ArmPIDF;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
-import org.opencv.core.Mat;
 
 @Autonomous (name = "AutoOficial", group = "LinearOpMode")
 public class AutoDireita extends LinearOpMode {
