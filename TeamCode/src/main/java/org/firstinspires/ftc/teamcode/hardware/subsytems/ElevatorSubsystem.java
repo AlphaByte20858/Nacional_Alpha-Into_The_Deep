@@ -5,13 +5,14 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.interfaces.SubsystemBase;
 import org.firstinspires.ftc.teamcode.hardware.robot.RobotHardware;
 
 @Config
 @TeleOp(name = "ElevatorPID")
-public class ElevatorSubsystem {
+public class ElevatorSubsystem implements SubsystemBase {
     /// definindo os motores do Elevador ///
-    RobotHardware robot = new RobotHardware();
+    RobotHardware Robot;
     int encoderPosition;
     double pidPower = 0;
     private PIDController controller;
@@ -19,6 +20,9 @@ public class ElevatorSubsystem {
 
     public static int target = 0;
 
+    public ElevatorSubsystem(RobotHardware robot){
+        this.Robot = robot;
+    }
     public void init() {
         controller = new PIDController(p,i,d);
         /// variáveis para o PID
@@ -26,26 +30,21 @@ public class ElevatorSubsystem {
 
     }
     public void periodic(){
-        encoderPosition = -((robot.LSi.getCurrentPosition() + robot.LSii.getCurrentPosition())/10);
-        robot.LSi.setPower(target);
-        robot.LSii.setPower(target);
-        pidPower = controller.calculate(encoderPosition,target);
-        robot.LSi.setPower(pidPower);
-        robot.LSii.setPower(pidPower);
+        encoderPosition = -((Robot.LSi.getCurrentPosition() + Robot.LSii.getCurrentPosition())/10);
     }
 
     public void manualControl(float upButton, float downButton) {
-        robot.LSi.setPower(upButton - downButton);
-        robot.LSii.setPower(upButton - downButton);
+        Robot.LSi.setPower(upButton - downButton);
+        Robot.LSii.setPower(upButton - downButton);
     }
 
     public void pidManualControl(float upButton, float downButton){
         double position;
         int lastPosition = 0;
-        robot.LSi.setPower(upButton - downButton * 0.7);
-        robot.LSii.setPower(upButton - downButton * 0.7);
-        encoderPosition = (robot.LSi.getCurrentPosition() + robot.LSii.getCurrentPosition());
-        if (robot.LSi.getPower() == 0 && robot.LSii.getPower() == 0){
+        Robot.LSi.setPower(upButton - downButton * 0.7);
+        Robot.LSii.setPower(upButton - downButton * 0.7);
+        encoderPosition = (Robot.LSi.getCurrentPosition() + Robot.LSii.getCurrentPosition());
+        if (Robot.LSi.getPower() == 0 && Robot.LSii.getPower() == 0){
             pidTarget(lastPosition);
         }
         else{
@@ -53,10 +52,10 @@ public class ElevatorSubsystem {
         }
     }
     public void pidTarget(int target){
-        encoderPosition = (robot.LSi.getCurrentPosition() + robot.LSii.getCurrentPosition());
+        encoderPosition = (Robot.LSi.getCurrentPosition() + Robot.LSii.getCurrentPosition());
         pidPower = controller.calculate(encoderPosition,target);
-        robot.LSi.setPower(pidPower);
-        robot.LSii.setPower(pidPower);
+        Robot.LSi.setPower(pidPower);
+        Robot.LSii.setPower(pidPower);
     }
 
 }

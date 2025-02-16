@@ -15,8 +15,7 @@ public class RobotHardware {
     OpMode opMode;
     public DcMotorEx MDT, MDF, MET, MEF, LSi, LSii, Arm;
     double axial, lateral, yaw,angle;
-    Servo wristServo, clawServo; //Define o nome dos servos no sistema
-    boolean yawG, raw;
+    public Servo wristServo, clawServo; //Define o nome dos servos no sistema
     IMU imu;
     private static RobotHardware instance = null;
 
@@ -54,7 +53,6 @@ public class RobotHardware {
         MET.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         MEF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-
         MDF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         MDT.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         MET.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -80,8 +78,6 @@ public class RobotHardware {
         clawServo = hardwareMap.get(Servo.class, "garra");
         wristServo.setPosition(0);
         clawServo.setPosition(0);
-        yawG = false;
-        raw = true;
     }
     private void armInit(HardwareMap hardwareMap){
         Arm = hardwareMap.get(DcMotorEx.class, "braço");

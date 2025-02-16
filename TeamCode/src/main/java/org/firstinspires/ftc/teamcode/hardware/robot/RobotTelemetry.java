@@ -1,35 +1,22 @@
 package org.firstinspires.ftc.teamcode.hardware.robot;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.robot.Robot;
 
-public class RobotTelemetry extends OpMode {
-    public void init(){
+import org.firstinspires.ftc.robotcontroller.external.samples.UtilityOctoQuadConfigMenu;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+public class RobotTelemetry extends LinearOpMode {
+    RobotHardware Robot;
+    public RobotTelemetry(RobotHardware Robot){
+        this.Robot = Robot;
     }
+    public void runOpMode(){
+    }
+
 
     public void periodic(){
 
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /// NÃO USAR NUNCAAAAAAAAAA///
-    ///  /// NÃO USAR NUNCAAAAAAAAAA///
-    ///  /// NÃO USAR NUNCAAAAAAAAAA///
-    ///
-    public void loop() {
-        /// NÃO USAR NUNCAAAAAAAAAA/// /// NÃO USAR NUNCAAAAAAAAAA/// /// NÃO USAR NUNCAAAAAAAAAA///
     }
 }
