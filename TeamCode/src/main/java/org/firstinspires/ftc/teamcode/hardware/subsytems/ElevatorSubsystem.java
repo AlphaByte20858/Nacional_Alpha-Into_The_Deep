@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.interfaces.SubsystemBase;
 import org.firstinspires.ftc.teamcode.hardware.robot.RobotHardware;
 
 @Config
-@TeleOp(name = "ElevatorPID")
 public class ElevatorSubsystem implements SubsystemBase {
     /// definindo os motores do Elevador ///
     RobotHardware Robot;

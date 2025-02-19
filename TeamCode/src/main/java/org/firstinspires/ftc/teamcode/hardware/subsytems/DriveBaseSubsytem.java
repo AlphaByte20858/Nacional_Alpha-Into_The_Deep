@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.hardware.subsytems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.interfaces.SubsystemBase;
 import org.firstinspires.ftc.teamcode.hardware.robot.RobotHardware;
 
 
-@Disabled
+@Config
 public class DriveBaseSubsytem implements SubsystemBase {
     private RobotHardware Robot;
     public DriveBaseSubsytem(RobotHardware Robot){

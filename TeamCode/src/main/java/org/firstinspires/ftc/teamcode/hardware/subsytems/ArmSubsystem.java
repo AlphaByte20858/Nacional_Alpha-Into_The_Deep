@@ -1,19 +1,26 @@
 package org.firstinspires.ftc.teamcode.hardware.subsytems;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.opMode;
+
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerNotifier;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.hardware.Constraints;
 import org.firstinspires.ftc.teamcode.interfaces.SubsystemBase;
 import org.firstinspires.ftc.teamcode.hardware.robot.RobotHardware;
 
-@Disabled
+@Config
 public class ArmSubsystem implements SubsystemBase {
 
-    private RobotHardware Robot;
+    private RobotHardware Robot;;
 
     private PIDController controller;
     Constraints.ArmConstraints constraints = new Constraints.ArmConstraints();
@@ -27,8 +34,10 @@ public class ArmSubsystem implements SubsystemBase {
     public void init(){
         controller = new PIDController(constraints.kp, constraints.ki, constraints.kd);
 
+
         Robot.Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Robot.Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
     public void periodic() {

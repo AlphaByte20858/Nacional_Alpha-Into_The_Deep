@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.teleops;
 
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.interfaces.OptimizedOpMode;
 import org.firstinspires.ftc.teamcode.hardware.robot.RobotHardware;
@@ -10,9 +11,10 @@ import org.firstinspires.ftc.teamcode.hardware.subsytems.ClawSubystem;
 import org.firstinspires.ftc.teamcode.hardware.subsytems.DriveBaseSubsytem;
 import org.firstinspires.ftc.teamcode.hardware.subsytems.ElevatorSubsystem;
 
+@TeleOp
 public class TeleopWithOOP extends OptimizedOpMode {
 
-    RobotHardware Robot = new RobotHardware();
+    RobotHardware Robot = new RobotHardware(this);
     ArmSubsystem Arm = new ArmSubsystem(Robot);
     ElevatorSubsystem Elevator = new ElevatorSubsystem(Robot);
     ClawSubystem Claw = new ClawSubystem(Robot);
@@ -20,7 +22,6 @@ public class TeleopWithOOP extends OptimizedOpMode {
     RobotTelemetry robotTelemetry = new RobotTelemetry(Robot);
 
     public void init(){
-        Robot.init(hardwareMap);
         Arm.init();
         Elevator.init();
         Claw.init();

@@ -17,30 +17,13 @@ public class RobotHardware {
     double axial, lateral, yaw,angle;
     public Servo wristServo, clawServo; //Define o nome dos servos no sistema
     IMU imu;
-    private static RobotHardware instance = null;
 
 
-    public void init(HardwareMap hardwareMap) {
-        driveBaseInit(hardwareMap);
-        elevatorInit(hardwareMap);
-        clawInit(hardwareMap);
-        armInit(hardwareMap);
-    }
-
-    public static RobotHardware getInstance() {
-        if (instance == null) {
-            instance = new RobotHardware();
-        }
-        return instance;
-    }
-    public void end(){
-        instance = null;
-    }
-    private void driveBaseInit(HardwareMap hardwareMap){
-        MET = hardwareMap.get(DcMotorEx.class, "MET");
-        MDT = hardwareMap.get(DcMotorEx.class, "MDT");
-        MDF = hardwareMap.get(DcMotorEx.class, "MDF");
-        MEF = hardwareMap.get(DcMotorEx.class, "MEF");
+    public RobotHardware(OpMode opMode) {
+        MET = opMode.hardwareMap.get(DcMotorEx.class, "MET");
+        MDT = opMode.hardwareMap.get(DcMotorEx.class, "MDT");
+        MDF = opMode.hardwareMap.get(DcMotorEx.class, "MDF");
+        MEF = opMode.hardwareMap.get(DcMotorEx.class, "MEF");
 
         MDF.setDirection(DcMotorSimple.Direction.FORWARD);
         MDT.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -57,10 +40,9 @@ public class RobotHardware {
         MDT.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         MET.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         MEF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
-    private void elevatorInit(HardwareMap hardwareMap){
-        LSi = hardwareMap.get(DcMotorEx.class, "LSi");
-        LSii = hardwareMap.get(DcMotorEx.class, "LSii");
+
+        LSi = opMode.hardwareMap.get(DcMotorEx.class, "LSi");
+        LSii = opMode.hardwareMap.get(DcMotorEx.class, "LSii");
         LSi.setDirection(DcMotorSimple.Direction.REVERSE);
         LSi.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         LSii.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -72,15 +54,11 @@ public class RobotHardware {
         LSii.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LSi.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         LSii.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
-    private void clawInit(HardwareMap hardwareMap){
-        wristServo = hardwareMap.get(Servo.class, "yawC");
-        clawServo = hardwareMap.get(Servo.class, "garra");
+        wristServo = opMode.hardwareMap.get(Servo.class, "yawC");
+        clawServo = opMode.hardwareMap.get(Servo.class, "garra");
         wristServo.setPosition(0);
         clawServo.setPosition(0);
-    }
-    private void armInit(HardwareMap hardwareMap){
-        Arm = hardwareMap.get(DcMotorEx.class, "braço");
+        Arm = opMode.hardwareMap.get(DcMotorEx.class, "braço");
         Arm.setDirection(DcMotorSimple.Direction.REVERSE);
 
         Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
