@@ -45,10 +45,20 @@ public class TeleOpDoxCria extends OpMode {
         MET.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         MEF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        LSi.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LSii.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        braço.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        LSi.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LSii.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        braço.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         MDF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         MDT.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         MET.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         MEF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
 
         // Orientação do Control Hub/Expansion Hub
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
@@ -140,7 +150,7 @@ public class TeleOpDoxCria extends OpMode {
         //Abrir/fechar a garra
         if (gamepad2.x && f.seconds() >= 0.5){
             if (raw == true){
-                garra.setPosition(0.15);
+                garra.setPosition(0.20);
                 raw = false;
             }
             else if (!raw) {
@@ -169,10 +179,10 @@ public class TeleOpDoxCria extends OpMode {
             braço.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             REATIVAR DEPOIS DE VER AS POSIÇÕES
             */
-            braço.setPower(0.14);
+            braço.setPower(0.24);
         }
         else if (gamepad2.left_bumper){
-            braço.setPower(-0.14);
+            braço.setPower(-0.24);
         }
         else {
             braço.setPower(0);

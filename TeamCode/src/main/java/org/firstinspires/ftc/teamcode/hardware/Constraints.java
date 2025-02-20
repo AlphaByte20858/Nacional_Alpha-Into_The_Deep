@@ -8,6 +8,7 @@ public class Constraints {
         public double kp = 0;
         public double ki = 0;
         public double kd = 0;
+        public double kf = 0;
     }
     public static class DriveBaseConstraints{
 

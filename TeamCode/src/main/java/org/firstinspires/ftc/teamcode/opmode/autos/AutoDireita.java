@@ -23,20 +23,18 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
 @Autonomous (name = "AutoOficial", group = "LinearOpMode")
 public class AutoDireita extends LinearOpMode {
-    DcMotorEx MEF, MET, MDF, MDT, LSi, LSii;
+    DcMotorEx MEF, MET, MDF, MDT, LSi, LSii, braço;
     Servo garra, yawC;
     IMU imu;
 
-    RobotHardware Robot = new RobotHardware(this);
-    ArmSubsystem Arm = new ArmSubsystem(Robot);
 
     public void runOpMode(){
-
 
         MEF = hardwareMap.get(DcMotorEx.class, "MEF");
         MET = hardwareMap.get(DcMotorEx.class, "MET");
         MDF = hardwareMap.get(DcMotorEx.class, "MDF");
         MDT = hardwareMap.get(DcMotorEx.class, "MDT");
+        braço = hardwareMap.get(DcMotorEx.class, "braço");
         LSi = hardwareMap.get(DcMotorEx.class, "LSi");
         LSii = hardwareMap.get(DcMotorEx.class, "LSii");
         yawC = hardwareMap.get(Servo.class, "yawC");
@@ -53,27 +51,25 @@ public class AutoDireita extends LinearOpMode {
         MEF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         LSii.setDirection(DcMotorSimple.Direction.REVERSE);
+        braço.setDirection(DcMotorSimple.Direction.REVERSE);
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
-        Arm.init();
-
         MecanumDrive peixinho = new MecanumDrive(hardwareMap, new Pose2d(0,0, Math.toRadians(0)));
 
-        Action plusOne, splinei, splineii, ajeita, samplei;
+        Action get2,plusOne, plusTwo, splinei, splineii, ajeita, samplei;
 
-
-        splinei = peixinho.actionBuilder(new Pose2d(0,0, Math.toRadians(0)))
-                .splineTo(new Vector2d(28,34), Math.toRadians(0))
+        splinei = peixinho.actionBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+                .splineTo(new Vector2d(29, 34), Math.toRadians(0))
                 .build();
 
-        splineii = peixinho.actionBuilder(new Pose2d(20,34, Math.toRadians(0)))
-                .splineToConstantHeading(new Vector2d(12, 8), Math.toRadians(0))
+        splineii = peixinho.actionBuilder(new Pose2d(20, 34, Math.toRadians(0)))
+                .splineTo(new Vector2d(16, 12), Math.toRadians(-90))
                 .build();
 
-        ajeita = peixinho.actionBuilder(new Pose2d(24,3, Math.toRadians(-90)))
-                .splineTo(new Vector2d( 46, -6), Math.toRadians(-90))
+        ajeita = peixinho.actionBuilder(new Pose2d(16, 12, Math.toRadians(-90)))
+                .splineToLinearHeading(new Pose2d(46, -4, Math.toRadians(-90)), Math.toRadians(-90))
                 /*.strafeTo(new Vector2d(46, 3))
                 .strafeTo(new Vector2d(46, -8))
                 .strafeToConstantHeading(new Vector2d(10, -8))
@@ -81,44 +77,68 @@ public class AutoDireita extends LinearOpMode {
                 .build();
 
 
-        /*samplei = peixinho.actionBuilder(new Pose2d(46, -12, Math.toRadians(-90)))
-                .splineToConstantHeading(new Vector2d(10, -17), Math.toRadians(-90))
-                .turnTo(Math.toRadians(90))
-                .build();
-*/
-        plusOne = peixinho.actionBuilder(new Pose2d(10, -17, Math.toRadians(90)))
-                .splineToLinearHeading(new Pose2d(28, 34, Math.toRadians(0)), Math.toRadians(0))
+        samplei = peixinho.actionBuilder(new Pose2d(43, -6, Math.toRadians(-90)))
+                .splineToConstantHeading(new Vector2d(2, -10), Math.toRadians(-90))
                 .build();
 
-        Arm.setTarget(15);
+        plusOne = peixinho.actionBuilder(new Pose2d(3, -12, Math.toRadians(90)))
+                .splineToLinearHeading(new Pose2d(30, 37, Math.toRadians(0)), Math.toRadians(0))
+                .build();
+
+        get2 = peixinho.actionBuilder(new Pose2d(28, 38, Math.toRadians(0)))
+                .splineToLinearHeading(new Pose2d(0, 9, Math.toRadians(-90)), Math.toRadians(-90))
+                .build();
+
+        plusTwo = peixinho.actionBuilder(new Pose2d(0, 9, Math.toRadians(-90)))
+                .splineToLinearHeading(new Pose2d(29, 42, Math.toRadians(0)), Math.toRadians(0))
+                .build();
+
+        braço.setPower(0.15);
         garra.setPosition(0.15);
         yawC.setPosition(0);
+
         waitForStart();
-        lineares(0.45);
+        lineares(0.35);
         Actions.runBlocking(new SequentialAction(
                 splinei
         ));
         lineares(0.8);
         sleep(500);
+        garra.setPosition(0);
         lineares(0);
-        sleep(400);
         Actions.runBlocking(new SequentialAction(
                 splineii,
                 ajeita
-                //,samplei
+                ,samplei
         ));
-        Arm.setTarget(260);
-        garra.setPosition(0.15);
-        lineares(0.25);
-        Arm.setTarget(20);
+        //segundo sample
+        braço.setPower(-0.45);
+        sleep(635);
+        //garra ang 6 pos 0.64
+        garra.setPosition(0.23);
+        sleep(100);
+        lineares(0.35);
+        braço.setPower(0.3);
         Actions.runBlocking(
                 plusOne
         );
-        lineares(0.8);
+        lineares(0.87);
         sleep(500);
         garra.setPosition(0);
         lineares(0);
-        sleep(400);
+        //terceiro sample
+        Actions.runBlocking(get2);
+        lineares(-0.26);
+        braço.setPower(-0.45);
+        sleep(635);
+        //garra ang 6 pos 0.64
+        garra.setPosition(0.23);
+        sleep(100);
+        lineares(0.32);
+        braço.setPower(0.3);
+        Actions.runBlocking(plusTwo);
+        lineares(0.87);
+        sleep(500);
     }
 
     public void lineares(double valorMotor){

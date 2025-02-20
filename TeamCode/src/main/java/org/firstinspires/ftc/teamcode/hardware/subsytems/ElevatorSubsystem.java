@@ -26,7 +26,6 @@ public class ElevatorSubsystem implements SubsystemBase {
         controller = new PIDController(p,i,d);
         /// variáveis para o PID
 
-
     }
     public void periodic(){
         encoderPosition = -((Robot.LSi.getCurrentPosition() + Robot.LSii.getCurrentPosition())/10);

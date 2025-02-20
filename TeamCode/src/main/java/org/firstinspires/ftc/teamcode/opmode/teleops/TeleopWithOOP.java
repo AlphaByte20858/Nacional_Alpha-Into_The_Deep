@@ -14,14 +14,20 @@ import org.firstinspires.ftc.teamcode.hardware.subsytems.ElevatorSubsystem;
 @TeleOp
 public class TeleopWithOOP extends OptimizedOpMode {
 
-    RobotHardware Robot = new RobotHardware(this);
-    ArmSubsystem Arm = new ArmSubsystem(Robot);
-    ElevatorSubsystem Elevator = new ElevatorSubsystem(Robot);
-    ClawSubystem Claw = new ClawSubystem(Robot);
-    DriveBaseSubsytem DriveBase = new DriveBaseSubsytem(Robot);
-    RobotTelemetry robotTelemetry = new RobotTelemetry(Robot);
+    RobotHardware Robot;
+    ArmSubsystem Arm;
+    ElevatorSubsystem Elevator;
+    ClawSubystem Claw;
+    DriveBaseSubsytem DriveBase;
+    RobotTelemetry robotTelemetry;
 
     public void init(){
+        Robot = new RobotHardware(this);
+        Arm = new ArmSubsystem(Robot);
+        Elevator = new ElevatorSubsystem(Robot);
+        Claw = new ClawSubystem(Robot);
+        DriveBase = new DriveBaseSubsytem(Robot);
+        robotTelemetry = new RobotTelemetry(Robot);
         Arm.init();
         Elevator.init();
         Claw.init();
