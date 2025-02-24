@@ -61,48 +61,47 @@ public class AutoDireita extends LinearOpMode {
         Action get2,plusOne, plusTwo, splinei, splineii, ajeita, samplei;
 
         splinei = peixinho.actionBuilder(new Pose2d(0, 0, Math.toRadians(0)))
-                .splineTo(new Vector2d(29, 34), Math.toRadians(0))
+                .setTangent(Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(29, 10, Math.toRadians(0)), Math.toRadians(0))
                 .build();
 
         splineii = peixinho.actionBuilder(new Pose2d(20, 34, Math.toRadians(0)))
-                .splineTo(new Vector2d(16, 12), Math.toRadians(-90))
+                .setTangent(Math.toRadians(-90))
+                .splineToLinearHeading(new Pose2d(14, -10, Math.toRadians(-90)), Math.toRadians(-90))
                 .build();
 
-        ajeita = peixinho.actionBuilder(new Pose2d(16, 12, Math.toRadians(-90)))
-                .splineToLinearHeading(new Pose2d(46, -4, Math.toRadians(-90)), Math.toRadians(-90))
-                /*.strafeTo(new Vector2d(46, 3))
-                .strafeTo(new Vector2d(46, -8))
-                .strafeToConstantHeading(new Vector2d(10, -8))
-                .splineToConstantHeading(new Vector2d(46, -12), Math.toRadians(-90))*/
+        ajeita = peixinho.actionBuilder(new Pose2d(16, -12, Math.toRadians(-90)))
+                .setTangent(Math.toRadians(-90))
+                .splineToLinearHeading(new Pose2d(48, -26, Math.toRadians(-90)), Math.toRadians(-90))
                 .build();
 
-
-        samplei = peixinho.actionBuilder(new Pose2d(43, -6, Math.toRadians(-90)))
-                .splineToConstantHeading(new Vector2d(2, -10), Math.toRadians(-90))
+        samplei = peixinho.actionBuilder(new Pose2d(48, -27, Math.toRadians(-90)))
+                .splineToLinearHeading(new Pose2d(2, -31, Math.toRadians(-90)), Math.toRadians(0))
                 .build();
 
-        plusOne = peixinho.actionBuilder(new Pose2d(3, -12, Math.toRadians(90)))
-                .splineToLinearHeading(new Pose2d(30, 37, Math.toRadians(0)), Math.toRadians(0))
+        plusOne = peixinho.actionBuilder(new Pose2d(2, -31, Math.toRadians(0)))
+                .setTangent(Math.toRadians(-90))
+                .splineToLinearHeading(new Pose2d(30, 13, Math.toRadians(0)), Math.toRadians(0))
                 .build();
 
-        get2 = peixinho.actionBuilder(new Pose2d(28, 38, Math.toRadians(0)))
-                .splineToLinearHeading(new Pose2d(0, 9, Math.toRadians(-90)), Math.toRadians(-90))
+        get2 = peixinho.actionBuilder(new Pose2d(29, 14, Math.toRadians(0)))
+                .setTangent(Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(0, -15, Math.toRadians(-90)), Math.toRadians(-90))
                 .build();
 
-        plusTwo = peixinho.actionBuilder(new Pose2d(0, 9, Math.toRadians(-90)))
-                .splineToLinearHeading(new Pose2d(29, 42, Math.toRadians(0)), Math.toRadians(0))
+        plusTwo = peixinho.actionBuilder(new Pose2d(0, -15, Math.toRadians(-90)))
+                .splineToLinearHeading(new Pose2d(29, 18, Math.toRadians(0)), Math.toRadians(0))
                 .build();
 
         braço.setPower(0.15);
         garra.setPosition(0.15);
         yawC.setPosition(0);
-
         waitForStart();
-        lineares(0.35);
+        lineares(0.42);
         Actions.runBlocking(new SequentialAction(
                 splinei
         ));
-        lineares(0.8);
+        lineares(0.87);
         sleep(500);
         garra.setPosition(0);
         lineares(0);
@@ -114,11 +113,11 @@ public class AutoDireita extends LinearOpMode {
         //segundo sample
         braço.setPower(-0.45);
         sleep(635);
-        //garra ang 6 pos 0.64
         garra.setPosition(0.23);
         sleep(100);
         lineares(0.35);
         braço.setPower(0.3);
+        yawC.setPosition(0.64);
         Actions.runBlocking(
                 plusOne
         );
@@ -134,9 +133,11 @@ public class AutoDireita extends LinearOpMode {
         //garra ang 6 pos 0.64
         garra.setPosition(0.23);
         sleep(100);
+        yawC.setPosition(0);
         lineares(0.32);
         braço.setPower(0.3);
         Actions.runBlocking(plusTwo);
+        yawC.setPosition(0.64);
         lineares(0.87);
         sleep(500);
     }

@@ -5,10 +5,10 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 public class Constraints {
     public static class ElevatorConstraints{
-        public double kp = 0;
+        public double kp = 0.045;
         public double ki = 0;
-        public double kd = 0;
-        public double kf = 0;
+        public double kd = 0.0002;
+        public double kf = 0.15;
     }
     public static class DriveBaseConstraints{
 
