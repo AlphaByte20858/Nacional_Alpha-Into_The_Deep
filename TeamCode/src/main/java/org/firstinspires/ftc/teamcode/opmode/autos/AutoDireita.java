@@ -94,7 +94,7 @@ public class AutoDireita extends LinearOpMode {
                 .build();
 
         braço.setPower(0.15);
-        garra.setPosition(0.15);
+        garra.setPosition(0.5);
         yawC.setPosition(0);
         waitForStart();
         lineares(0.42);
@@ -113,7 +113,7 @@ public class AutoDireita extends LinearOpMode {
         //segundo sample
         braço.setPower(-0.45);
         sleep(635);
-        garra.setPosition(0.23);
+        garra.setPosition(0.5);
         sleep(100);
         lineares(0.35);
         braço.setPower(0.3);
@@ -131,7 +131,7 @@ public class AutoDireita extends LinearOpMode {
         braço.setPower(-0.45);
         sleep(635);
         //garra ang 6 pos 0.64
-        garra.setPosition(0.23);
+        garra.setPosition(0.5);
         sleep(100);
         yawC.setPosition(0);
         lineares(0.32);

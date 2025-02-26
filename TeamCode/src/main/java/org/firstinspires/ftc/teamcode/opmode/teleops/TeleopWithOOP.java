@@ -22,6 +22,7 @@ public class TeleopWithOOP extends OptimizedOpMode {
     RobotTelemetry robotTelemetry;
 
     public void init(){
+
         Robot = new RobotHardware(this);
         Arm = new ArmSubsystem(Robot);
         Elevator = new ElevatorSubsystem(Robot);
@@ -50,12 +51,15 @@ public class TeleopWithOOP extends OptimizedOpMode {
 
 
     public void gamepad1Keybinds(){
-        if (gamepad1.a) {
-            Actions.runBlocking(Arm.setHighPosition());
-        }
+        DriveBase.robotGyroMove(gamepad1.right_trigger-gamepad1.left_trigger,gamepad1.left_stick_x, gamepad1.right_stick_x);
     }
 
     public void gamepad2Keybinds() {
+        Elevator.manualControl(gamepad2.right_trigger, gamepad2.left_trigger);
+        Arm.manualControl(gamepad2.right_bumper, gamepad2.left_bumper);
+        if (gamepad2.dpad_up){
+            Elevator.setPidTarget(-1900);
+        }
 
     }
 

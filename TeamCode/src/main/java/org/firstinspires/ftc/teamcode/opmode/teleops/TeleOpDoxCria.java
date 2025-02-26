@@ -70,7 +70,7 @@ public class TeleOpDoxCria extends OpMode {
         LSii.setDirection(DcMotorSimple.Direction.REVERSE);
         braço.setDirection(DcMotorSimple.Direction.REVERSE);
         yawC.setPosition(0);
-        garra.setPosition(0.15);
+        garra.setPosition(0.5);
         yawG = false;
         raw = true;
 
@@ -150,11 +150,11 @@ public class TeleOpDoxCria extends OpMode {
         //Abrir/fechar a garra
         if (gamepad2.x && f.seconds() >= 0.5){
             if (raw == true){
-                garra.setPosition(0.20);
+                garra.setPosition(0.5);
                 raw = false;
             }
             else if (!raw) {
-                garra.setPosition(0);
+                garra.setPosition(0.2);
                 raw = true;
             }
             f.reset();

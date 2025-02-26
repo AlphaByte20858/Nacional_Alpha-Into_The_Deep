@@ -1,24 +1,15 @@
 package org.firstinspires.ftc.teamcode.opmode.tests;
 
-import static org.firstinspires.ftc.teamcode.opmode.tests.PIDfTest.p;
-
-import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
-import com.acmerobotics.roadrunner.Line;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.hardware.robot.RobotHardware;
@@ -57,16 +48,19 @@ public class TestesGerais extends LinearOpMode {
                 .splineToLinearHeading(new Pose2d(14, -10, Math.toRadians(-90)), Math.toRadians(-90))
                 .build();
 
-        ajeita = peixinho.actionBuilder(new Pose2d(16, -12, Math.toRadians(-90)))
+        ajeita = peixinho.actionBuilder(new Pose2d(15, -12, Math.toRadians(-90)))
                 .setTangent(Math.toRadians(-90))
-                .splineToLinearHeading(new Pose2d(48, -26, Math.toRadians(-90)), Math.toRadians(-90))
+                .splineToLinearHeading(new Pose2d(50, -24, Math.toRadians(-90)), Math.toRadians(-90))
                 .build();
 
-        samplei = peixinho.actionBuilder(new Pose2d(48, -28, Math.toRadians(-90)))
-                .splineToLinearHeading(new Pose2d(2, -30, Math.toRadians(-90)), Math.toRadians(0))
+        samplei = peixinho.actionBuilder(new Pose2d(50, -25, Math.toRadians(-90)))
+                .setTangent(Math.toRadians(-180))
+                .splineToSplineHeading(new Pose2d(11, -30, Math.toRadians(-180)), Math.toRadians(-180))
+                .setTangent(Math.toRadians(-90))
+                .splineToLinearHeading(new Pose2d(0, -22, Math.toRadians(-90)), Math.toRadians(-90))
                 .build();
 
-        plusOne = peixinho.actionBuilder(new Pose2d(2, -31, Math.toRadians(0)))
+        plusOne = peixinho.actionBuilder(new Pose2d(12, -30, Math.toRadians(-180)))
                 .setTangent(Math.toRadians(-90))
                 .splineToLinearHeading(new Pose2d(30, 13, Math.toRadians(0)), Math.toRadians(0))
                 .build();
@@ -82,47 +76,43 @@ public class TestesGerais extends LinearOpMode {
 
         arm.init();
         elevador.init();
-        robot.clawServo.setPosition(0.23);
+        robot.clawServo.setPosition(0.5);
 //        elevador.pidTarget(0);
-        arm.setTarget(0);
+        arm.setPidTarget(0);
         robot.wristServo.setPosition(0);
         waitForStart();
+
+
         arm.periodic();
         elevador.periodic();
-        Actions.runBlocking(new ParallelAction(splinei, linearMid));
-        Actions.runBlocking(linearHigh);
+        Actions.runBlocking(new SequentialAction(armHigh, splinei,linearHigh));
         robot.clawServo.setPosition(0);
         sleep(200);
-        Actions.runBlocking(new SequentialAction(new ParallelAction(splineii, linearLow),
+        Actions.runBlocking(new SequentialAction(linearLow, splineii,
                 ajeita,
-                samplei
-        ));
+                samplei,
+                armLow,
+                new InstantAction(() -> {robot.clawServo.setPosition(0.5); sleep(300);}
+        ),
+                armHigh));
         //segundo sample
-        Actions.runBlocking(armLow);
-        sleep(400);
-        robot.clawServo.setPosition(0.23);
-        sleep(100);
-        Actions.runBlocking(new ParallelAction(plusOne, armHigh,
-                linearMid,
+        sleep(300);
+        Actions.runBlocking(new SequentialAction(plusOne,
                 new InstantAction(() -> {
                     robot.wristServo.setPosition(0.7);
-                })
-        ));
-        robot.wristServo.setPosition(0.7);
+                }),
+                linearHigh));
+        sleep(300);
         robot.clawServo.setPosition(0);
-
-        sleep(200);
-        Actions.runBlocking(linearHigh);
-        robot.clawServo.setPosition(0);
-        //terceiro sample
         Actions.runBlocking(new SequentialAction(new ParallelAction(
                 get2,
                 linearLow
         )));
+        //terceiro sample
         tempo.reset();
         Actions.runBlocking(armLow);
         //garra ang 6 pos 0.64
-        robot.clawServo.setPosition(0.23);
+        robot.clawServo.setPosition(0.5);
         sleep(100);
         robot.wristServo.setPosition(0);
         Actions.runBlocking((new ParallelAction(plusTwo,

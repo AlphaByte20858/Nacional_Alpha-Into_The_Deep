@@ -12,7 +12,7 @@ public class ServoPosDef extends OpMode {
     ElapsedTime timing = new ElapsedTime();
     public void init() {
         //TODO: só alterar de teste para teste o deviceName
-        servo = hardwareMap.get(Servo.class, "yawC");
+        servo = hardwareMap.get(Servo.class, "garra");
         servo.setPosition(0);
         pos = 0;
     }

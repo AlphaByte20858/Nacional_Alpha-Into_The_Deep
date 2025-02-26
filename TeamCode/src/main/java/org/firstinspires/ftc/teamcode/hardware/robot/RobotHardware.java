@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.hardware.robot;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,7 +17,7 @@ public class RobotHardware {
     public DcMotorEx MDT, MDF, MET, MEF, LSi, LSii, Arm;
     double axial, lateral, yaw,angle;
     public Servo wristServo, clawServo; //Define o nome dos servos no sistema
-    IMU imu;
+    public IMU imu;
 
 
     public RobotHardware(OpMode opMode) {
@@ -65,5 +66,15 @@ public class RobotHardware {
 
         //define o meio de "freio" para os motores
         Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        imu = opMode.hardwareMap.get(IMU.class,"imu");
+        RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
+                RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
+                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
+
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoFacingDirection, usbFacingDirection);
+
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
+        imu.resetYaw();
     }
 }

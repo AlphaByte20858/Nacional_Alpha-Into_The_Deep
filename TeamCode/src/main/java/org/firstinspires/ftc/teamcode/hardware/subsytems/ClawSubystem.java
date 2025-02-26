@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.hardware.subsytems;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -47,5 +49,30 @@ public class ClawSubystem implements SubsystemBase {
             }
             timer.reset();
         }
+    }
+    public Action setClawOpen(){
+        return new InstantAction(() -> {
+            Robot.clawServo.setPosition(0);
+        });
+    }
+    public Action setClawClosed(){
+        return new InstantAction(() -> {
+            Robot.clawServo.setPosition(0);
+        });
+    }
+    public Action setWrist90(){
+        return new InstantAction(() -> {
+            Robot.clawServo.setPosition(0);
+        });
+    }
+    public Action setWrist180(){
+        return new InstantAction(() -> {
+            Robot.clawServo.setPosition(0);
+        });
+    }
+    public Action setWrist0(){
+        return new InstantAction(() -> {
+            Robot.clawServo.setPosition(0);
+        });
     }
 }
