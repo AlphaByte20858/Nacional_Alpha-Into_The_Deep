@@ -65,17 +65,17 @@ public class ArmSubsystem implements SubsystemBase {
 
     public Action setHighPosition(){
         return new InstantAction(() -> {
-            setTarget(constraints.highPosition);
+            setTarget(constraints.highArmPosition);
         });
     }
     public Action setMidPosition(){
         return new InstantAction(() -> {
-            setTarget(constraints.midPosition);
+            setTarget(constraints.midArmPosition);
         });
     }
     public Action setLowPosition(){
         return new InstantAction(() -> {
-            setTarget(constraints.lowPosition);
+            setTarget(constraints.lowArmPosition);
         });
     }
 }

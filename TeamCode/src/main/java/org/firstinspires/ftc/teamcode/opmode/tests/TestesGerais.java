@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.tests;
 
+import static org.firstinspires.ftc.teamcode.opmode.tests.PIDfTest.p;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -37,27 +39,16 @@ public class TestesGerais extends LinearOpMode {
         MecanumDrive peixinho = new MecanumDrive(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)));
 
         Action get2, plusOne, plusTwo, splinei, splineii, ajeita, samplei; //actions trajetória
-        Action linearHigh, linearMid, linearLow, armLow, armHigh;
+        Action linearHigh, linearMid, linearLow, armHigh, armLow;
 
-        linearHigh = new InstantAction(() -> {
-            elevador.pidTarget(-1900);
-        });
-        linearMid = new InstantAction(() ->{
-            {
-                elevador.pidTarget(-1000);
-            }});
-        linearLow = new InstantAction(() ->{
-            elevador.pidTarget(0);
-        });
-        armHigh = new InstantAction(() -> {
-            arm.setTarget(0);
-        });
-        armLow = new InstantAction(() -> {
-            arm.setTarget(-430);
-        });
+        linearHigh = elevador.setHighPosition();
+        linearMid = elevador.setMidPosition();
+        linearLow = elevador.setLowPosition();
+        armHigh = arm.setHighPosition();
+        armLow = arm.setLowPosition();
+
         splinei = peixinho.actionBuilder(new Pose2d(0, 0, Math.toRadians(0)))
                 .setTangent(Math.toRadians(0))
-                .stopAndAdd(new LinearHigh(-1000, robot.LSi, robot.LSii))
                 .splineToLinearHeading(new Pose2d(29, 10, Math.toRadians(0)), Math.toRadians(0))
                 .build();
 
@@ -71,8 +62,8 @@ public class TestesGerais extends LinearOpMode {
                 .splineToLinearHeading(new Pose2d(48, -26, Math.toRadians(-90)), Math.toRadians(-90))
                 .build();
 
-        samplei = peixinho.actionBuilder(new Pose2d(48, -27, Math.toRadians(-90)))
-                .splineToLinearHeading(new Pose2d(2, -31, Math.toRadians(-90)), Math.toRadians(0))
+        samplei = peixinho.actionBuilder(new Pose2d(48, -28, Math.toRadians(-90)))
+                .splineToLinearHeading(new Pose2d(2, -30, Math.toRadians(-90)), Math.toRadians(0))
                 .build();
 
         plusOne = peixinho.actionBuilder(new Pose2d(2, -31, Math.toRadians(0)))
@@ -92,150 +83,54 @@ public class TestesGerais extends LinearOpMode {
         arm.init();
         elevador.init();
         robot.clawServo.setPosition(0.23);
-        elevador.pidTarget(0);
+//        elevador.pidTarget(0);
         arm.setTarget(0);
         robot.wristServo.setPosition(0);
         waitForStart();
         arm.periodic();
         elevador.periodic();
-        Actions.runBlocking(new ParallelAction(splinei, linearMid)
-        );
-        sleep(200);
+        Actions.runBlocking(new ParallelAction(splinei, linearMid));
+        Actions.runBlocking(linearHigh);
         robot.clawServo.setPosition(0);
-        Actions.runBlocking(new SequentialAction(
-                splineii,
+        sleep(200);
+        Actions.runBlocking(new SequentialAction(new ParallelAction(splineii, linearLow),
                 ajeita,
                 samplei
         ));
         //segundo sample
-        tempo.reset();
-        while (tempo.seconds() < 1) {
-            arm.setTarget(-430);
-        }
+        Actions.runBlocking(armLow);
+        sleep(400);
         robot.clawServo.setPosition(0.23);
         sleep(100);
-        Actions.runBlocking(new ParallelAction(plusOne,
-                new InstantAction(() -> {
-                    arm.setTarget(-20);
-                }),
+        Actions.runBlocking(new ParallelAction(plusOne, armHigh,
                 linearMid,
                 new InstantAction(() -> {
                     robot.wristServo.setPosition(0.7);
                 })
         ));
-        tempo.reset();
-        while (tempo.seconds() < 2) {
-            arm.setTarget(-20);
-            elevador.pidTarget(1000);
-            robot.wristServo.setPosition(0.7);
-        }
+        robot.wristServo.setPosition(0.7);
         robot.clawServo.setPosition(0);
 
         sleep(200);
-        tempo.reset();
-        while (tempo.seconds() < 2) {
-            elevador.pidTarget(-1600);
-        }
+        Actions.runBlocking(linearHigh);
         robot.clawServo.setPosition(0);
         //terceiro sample
         Actions.runBlocking(new SequentialAction(new ParallelAction(
                 get2,
-                new InstantAction(() -> elevador.pidTarget(0))
+                linearLow
         )));
         tempo.reset();
-        while (tempo.seconds() < 1) {
-            arm.setTarget(-430);
-        }
+        Actions.runBlocking(armLow);
         //garra ang 6 pos 0.64
         robot.clawServo.setPosition(0.23);
         sleep(100);
         robot.wristServo.setPosition(0);
         Actions.runBlocking((new ParallelAction(plusTwo,
-                new InstantAction(() -> arm.setTarget(-20)),
-                new InstantAction(() -> elevador.pidTarget(-1000)),
+                armHigh,
+                linearMid,
                 new InstantAction(() -> robot.wristServo.setPosition(0.7)))));
         tempo.reset();
-        while (tempo.seconds() < 1) {
-            elevador.pidTarget(-2800);
-        }
+        Actions.runBlocking(linearMid);
         robot.clawServo.setPosition(0);
-    }
-
-    public class Act implements Action {
-        private PIDController controller;
-        public double p = 0.045, i = 0, d = 0.0002;
-        public double f = 0.15;
-        private final double ticksInDegree = 537.7 / 360;
-
-        DcMotorEx LSi, LSii;
-        int target;
-
-        public Act(int posAlvo, DcMotorEx linearI, DcMotorEx linearII) {
-            controller = new PIDController(p, i, d);
-            telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
-            LSi = hardwareMap.get(DcMotorEx.class, "LSi");
-            LSii = hardwareMap.get(DcMotorEx.class, "LSii");
-
-            this.target = posAlvo;
-            this.LSi = linearI;
-            this.LSii = linearII;
-        }
-
-        @Override
-        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            double power;
-            controller = new PIDController(p, i, d);
-            telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
-            controller.setPID(p, i, d);
-            int posElev = LSi.getCurrentPosition();
-            double pid = controller.calculate(posElev, target);
-            double ff = Math.cos(Math.toRadians(target / ticksInDegree)) * f;
-
-            power = pid + ff;
-            LSii.setPower(power);
-            LSi.setPower(power);
-
-            return false;
-        }
-    }
-    public class LinearHigh implements Action {
-        private PIDController controller;
-        public double p = 0.045, i = 0, d = 0.0002;
-        public double f = 0.15;
-        private final double ticksInDegree = 537.7/ 360;
-
-        DcMotorEx LSi, LSii;
-        int target;
-        public LinearHigh(int posAlvo, DcMotorEx linearI, DcMotorEx linearII){
-            controller = new PIDController(p, i, d);
-            telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
-            LSi = hardwareMap.get(DcMotorEx.class, "LSi");
-            LSii = hardwareMap.get(DcMotorEx.class, "LSii");
-
-            this.target = posAlvo;
-            this.LSi = linearI;
-            this.LSii = linearII;
-        }
-
-        @Override
-        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            double power;
-            controller = new PIDController(p, i, d);
-            telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
-            controller.setPID(p, i, d);
-            int posElev = LSi.getCurrentPosition();
-            double pid = controller.calculate(posElev, target);
-            double ff = Math.cos(Math.toRadians(target / ticksInDegree)) * f;
-
-            power = pid + ff;
-            LSii.setPower(power);
-            LSi.setPower(power);
-
-            return (posElev - LSi.getCurrentPosition() > -40);
-        }
     }
 }

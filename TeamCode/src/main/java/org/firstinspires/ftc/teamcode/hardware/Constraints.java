@@ -9,6 +9,11 @@ public class Constraints {
         public double ki = 0;
         public double kd = 0.0002;
         public double kf = 0.15;
+        public final int highPosition = -1900;
+        public final int midPosition = -1000;
+        public final int lowPosition = 0;
+        public final int basketHigh = -3700;
+        public int errorMargin = 20;
     }
     public static class DriveBaseConstraints{
 
@@ -22,9 +27,9 @@ public class Constraints {
         public final double ticksInDegree = (motorEncoder * motorReduction)/180;
 
         //todo: refazer as posições
-        public final double highPosition = 0;
-        public final double midPosition = 0;
-        public final double lowPosition = 0;
+        public final double highArmPosition = -430;
+        public final double midArmPosition = -200;
+        public final double lowArmPosition = 0;
     }
     public static class ClawConstraints{
 

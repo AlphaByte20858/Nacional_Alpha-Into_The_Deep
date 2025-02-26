@@ -33,16 +33,11 @@ public class AutoEsquerda extends LinearOpMode {
                 .splineToSplineHeading(new Pose2d(6, 49, Math.toRadians(135)), Math.toRadians(135))
                 .build();
 
-        linear1 = new InstantAction(() -> {
-            elevador.pidTarget(-3600);
-        });
-
 
         waitForStart();
         elevador.periodic();
-        Actions.runBlocking(new SequentialAction(new ParallelAction(
-                basket1,
-                linear1
-        )));
+        Actions.runBlocking(
+                basket1
+        );
     }
 }
