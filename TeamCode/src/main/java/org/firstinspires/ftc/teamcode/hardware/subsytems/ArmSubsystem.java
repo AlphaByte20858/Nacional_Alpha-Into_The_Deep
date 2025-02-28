@@ -19,8 +19,10 @@ public class ArmSubsystem implements SubsystemBase {
 
     private PIDController controller;
     Constraints.ArmConstraints consts = new Constraints.ArmConstraints();
-    static int target = 0;
+    public int target;
+
     int armPosition;
+    double pid,ff;
     double error;
     public ArmSubsystem(RobotHardware robot){
         this.Robot = robot;
@@ -48,18 +50,33 @@ public class ArmSubsystem implements SubsystemBase {
             Robot.Arm.setPower(0);
         }
     }
+
     public void setPidTarget(int targetVal){
+        this.target = targetVal;
         controller.setPID(consts.kp, consts.ki, consts.kd);
-        target = targetVal;
-        double pid = controller.calculate(armPosition, targetVal);
+        int positionArm = Robot.Arm.getCurrentPosition();
+        double pid = controller.calculate(positionArm, targetVal);
         double ff = Math.cos(Math.toRadians(targetVal / consts.ticksInDegree)) * consts.kf;
 
         double power = pid + ff;
         Robot.Arm.setPower(power);
     }
+
     public void setStop(){
 
+        ff = Math.cos(Math.toRadians(target / consts.ticksInDegree)) * consts.kf;
+
+
+        double power = ff;
+
+
+        Robot.Arm.setPower(power);
+
     }
+    public double getEncoderValue(){
+        return Robot.Arm.getCurrentPosition();
+    };
+
 
     public Action setHighPosition(){
         return new Action() {
@@ -68,25 +85,6 @@ public class ArmSubsystem implements SubsystemBase {
                 error = getEncoderValue() - consts.highPosition;
                 if (Math.abs(error) > consts.errorMargin){
                     setPidTarget(consts.highPosition);
-                }
-                else{
-                    setStop();
-                    return false;
-                }
-                return true;
-            }
-        };
-    }
-    public double getEncoderValue(){
-        return Robot.Arm.getCurrentPosition();
-    };
-    public Action setMidPosition(){
-        return new Action() {
-            @Override
-            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                error = getEncoderValue() - consts.midPosition;
-                if (Math.abs(error) > consts.errorMargin){
-                    setPidTarget(consts.midPosition);
                 }
                 else{
                     setStop();
@@ -105,6 +103,52 @@ public class ArmSubsystem implements SubsystemBase {
                     setPidTarget(consts.lowPosition);
                 } else {
                     setStop();
+                    return false;
+                }
+                return true;
+            }
+        };
+    }
+    public Action setMidPosition(){
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                error = getEncoderValue() - consts.midPosition;
+                if (Math.abs(error) > consts.errorMargin){
+                    setPidTarget(consts.midPosition);
+                }
+                else{
+                    setStop();
+                    return false;
+                }
+                return true;
+            }
+        };
+    }
+    public Action getSample(){
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                error = getEncoderValue() - consts.sampleGet;
+                if (Math.abs(error) > consts.errorMargin){
+                    setPidTarget(consts.sampleGet);
+                }
+                else{
+                    return false;
+                }
+                return true;
+            }
+        };
+    }
+    public Action putSample(){
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                error = getEncoderValue() - consts.samplePut;
+                if (Math.abs(error) > consts.errorMargin){
+                    setPidTarget(consts.samplePut);
+                }
+                else{
                     return false;
                 }
                 return true;

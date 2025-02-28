@@ -154,7 +154,7 @@ public class TeleOpDoxCria extends OpMode {
                 raw = false;
             }
             else if (!raw) {
-                garra.setPosition(0.2);
+                garra.setPosition(0.0);
                 raw = true;
             }
             f.reset();

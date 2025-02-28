@@ -30,12 +30,12 @@ public class TestesAuto extends LinearOpMode {
         Action basket1, basket2, basket3, sample1, sample2, sample3;
 
         basket1 = peixinho.actionBuilder(new Pose2d(0,0, Math.toRadians(0)))
-                .splineToSplineHeading(new Pose2d(6, 45, Math.toRadians(135)), Math.toRadians(135))
+                .splineToSplineHeading(new Pose2d(6, 44, Math.toRadians(135)), Math.toRadians(135))
                 .build();
 
         sample1 = peixinho.actionBuilder(new Pose2d(6, 45, Math.toRadians(135)))
                 .setTangent(Math.toRadians(-45))
-                .splineToLinearHeading(new Pose2d(16, 34, Math.toRadians(0)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(16, 36, Math.toRadians(0)), Math.toRadians(0))
                 .build();
 
         basket2 = peixinho.actionBuilder(new Pose2d(16, 34, Math.toRadians(0)))
@@ -45,11 +45,11 @@ public class TestesAuto extends LinearOpMode {
 
         sample2 = peixinho.actionBuilder(new Pose2d(16, 45, Math.toRadians(145)))
                 .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(16, 37, Math.toRadians(0)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(16, 42, Math.toRadians(0)), Math.toRadians(0))
                         .build();
 
         basket3 = peixinho.actionBuilder(new Pose2d(16, 37, Math.toRadians(0)))
-                .splineToLinearHeading(new Pose2d(6, 45, Math.toRadians(145)), Math.toRadians(145))
+                .splineToLinearHeading(new Pose2d(6, 44, Math.toRadians(145)), Math.toRadians(145))
                 .build();
 
         waitForStart();

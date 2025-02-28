@@ -57,25 +57,21 @@ public class ElevatorSubsystem implements SubsystemBase {
             lastPosition = encoderPosition;
         }
     }
-    public void setPidTarget(int target){
-
-
-        this.target = target;
+    public void setPidTarget(int valueTarget){
+        this.target = valueTarget;
         controller.setPID(p, i, d);
         int elevatorPosition = Robot.LSi.getCurrentPosition();
-        pid = controller.calculate(elevatorPosition, target);
+        pid = controller.calculate(elevatorPosition, valueTarget);
         ff = Math.cos(Math.toRadians(this.target / ticksInDegree)) * f;
 
         double power = pid + ff;
 
         setPower(power);
-
-
     }
     public void setStop(){
 
 
-        ff = Math.cos(Math.toRadians(target / ticksInDegree)) * f;
+        ff = Math.cos(Math.toRadians(target /   ticksInDegree)) * f;
 
 
         double power = ff;

@@ -12,8 +12,8 @@ public class Constraints {
         public final int highPosition = -1900;
         public final int midPosition = -1000;
         public final int lowPosition = 0;
-        public final int basketHigh = -3700;
-        public int errorMargin = 20;
+        public final int basketHigh = -3600;
+        public int errorMargin = 10;
     }
     public static class DriveBaseConstraints{
 
@@ -23,15 +23,16 @@ public class Constraints {
         public final double motorReduction = (5*4*3);
         public final int motorRPM = 6000;
 
-        public final static double kp = 0.002, ki = 0, kd = 0.00001, kf = 0.001;
+        public final static double kp = -0.0005, ki = 0, kd = -0.000009, kf = 0.00005;
         public final double ticksInDegree = (motorEncoder * motorReduction)/180;
 
         //todo: refazer as posições
-        public final int highPosition = 0;
+        public final int highPosition = 30;
         public final int midPosition = -200;
-        public final int lowPosition = -360;
-
-        public int errorMargin = 10;
+        public final int lowPosition = -390;
+        public final int sampleGet = -630;
+        public final int samplePut = -180;
+        public int errorMargin = 3;
     }
     public static class ClawConstraints{
 

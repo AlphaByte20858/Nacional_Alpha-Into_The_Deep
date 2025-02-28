@@ -18,22 +18,25 @@ import org.firstinspires.ftc.teamcode.hardware.subsytems.ElevatorSubsystem;
 @TeleOp
 public class PIDfTest extends OpMode {
     private PIDController controller;
-    public static double p = 0.002, i = 0, d = 0.0001;
-    public static double f =  0.001;
+    public static double p = -0.0005, i = 0, d = -0.000009;
+    public static double f =  0.00005;
     public static int target;
 
-    private final double ticksInDegree = (28 * 5*4*3) / 180;
-    DcMotorEx arm;
-    ElevatorSubsystem Elevator;
+    private final double ticksInDegree = 8192 / 360;
+    DcMotorEx arm,armEncoder;
     @Override
     public void init(){
         controller = new PIDController(p, i, d);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         arm = hardwareMap.get(DcMotorEx.class, "braço");
+        armEncoder = hardwareMap.get(DcMotorEx.class,"armEncoder");
 
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        armEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armEncoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         arm.setDirection(DcMotorSimple.Direction.REVERSE);
     }
@@ -41,7 +44,7 @@ public class PIDfTest extends OpMode {
     @Override
     public void loop() {
         controller.setPID(p, i, d);
-        int posElev = arm.getCurrentPosition();
+        int posElev = armEncoder.getCurrentPosition();
         double pid = controller.calculate(posElev, target);
         double ff = Math.cos(Math.toRadians(target / ticksInDegree)) * f;
 

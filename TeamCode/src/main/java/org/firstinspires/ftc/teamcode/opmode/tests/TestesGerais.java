@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
 @Autonomous
 public class TestesGerais extends LinearOpMode {
+
     public void runOpMode() {
         RobotHardware robot = new RobotHardware(this);
         ElevatorSubsystem elevador = new ElevatorSubsystem(robot);
@@ -29,11 +30,17 @@ public class TestesGerais extends LinearOpMode {
 
         MecanumDrive peixinho = new MecanumDrive(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)));
 
+
         Action get2, plusOne, plusTwo, splinei, splineii, ajeita, samplei; //actions trajetória
-        Action linearHigh, linearMid, linearLow, armHigh, armLow;
+        Action linearHigh, linearLow, armHigh, armLow;
+
+        arm.init();
+        elevador.init();
+
+        arm.periodic();
+        elevador.periodic();
 
         linearHigh = elevador.setHighPosition();
-        linearMid = elevador.setMidPosition();
         linearLow = elevador.setLowPosition();
         armHigh = arm.setHighPosition();
         armLow = arm.setLowPosition();
@@ -62,10 +69,10 @@ public class TestesGerais extends LinearOpMode {
 
         plusOne = peixinho.actionBuilder(new Pose2d(12, -30, Math.toRadians(-180)))
                 .setTangent(Math.toRadians(-90))
-                .splineToLinearHeading(new Pose2d(30, 13, Math.toRadians(0)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(29, 13, Math.toRadians(0)), Math.toRadians(0))
                 .build();
 
-        get2 = peixinho.actionBuilder(new Pose2d(29, 14, Math.toRadians(0)))
+        get2 = peixinho.actionBuilder(new Pose2d(20, 14, Math.toRadians(0)))
                 .setTangent(Math.toRadians(0))
                 .splineToLinearHeading(new Pose2d(0, -15, Math.toRadians(-90)), Math.toRadians(-90))
                 .build();
@@ -74,34 +81,30 @@ public class TestesGerais extends LinearOpMode {
                 .splineToLinearHeading(new Pose2d(29, 18, Math.toRadians(0)), Math.toRadians(0))
                 .build();
 
-        arm.init();
-        elevador.init();
         robot.clawServo.setPosition(0.5);
 //        elevador.pidTarget(0);
         arm.setPidTarget(0);
         robot.wristServo.setPosition(0);
         waitForStart();
-
-
-        arm.periodic();
-        elevador.periodic();
-        Actions.runBlocking(new SequentialAction(armHigh, splinei,linearHigh));
+        Actions.runBlocking(new SequentialAction(armHigh, splinei, new ParallelAction(linearHigh, armHigh)));
         robot.clawServo.setPosition(0);
         sleep(200);
         Actions.runBlocking(new SequentialAction(linearLow, splineii,
                 ajeita,
                 samplei,
                 armLow,
-                new InstantAction(() -> {robot.clawServo.setPosition(0.5); sleep(300);}
-        ),
-                armHigh));
-        //segundo sample
-        sleep(300);
-        Actions.runBlocking(new SequentialAction(plusOne,
-                new InstantAction(() -> {
-                    robot.wristServo.setPosition(0.7);
-                }),
-                linearHigh));
+                new InstantAction(() -> {sleep(300);}),
+                new InstantAction(() -> {robot.clawServo.setPosition(0.16);}),
+                new InstantAction(() -> {sleep(300);}),
+                armHigh
+                ));
+
+        Actions.runBlocking(new SequentialAction(armHigh,
+                new InstantAction(() -> {robot.wristServo.setPosition(0.7);}),
+                plusOne,
+                linearHigh
+        ));
+
         sleep(300);
         robot.clawServo.setPosition(0);
         Actions.runBlocking(new SequentialAction(new ParallelAction(
@@ -115,12 +118,11 @@ public class TestesGerais extends LinearOpMode {
         robot.clawServo.setPosition(0.5);
         sleep(100);
         robot.wristServo.setPosition(0);
-        Actions.runBlocking((new ParallelAction(plusTwo,
-                armHigh,
-                linearMid,
-                new InstantAction(() -> robot.wristServo.setPosition(0.7)))));
+        Actions.runBlocking(new SequentialAction(new ParallelAction(plusTwo,
+                armHigh)));
+        robot.wristServo.setPosition(0);
         tempo.reset();
-        Actions.runBlocking(linearMid);
+        Actions.runBlocking(linearHigh);
         robot.clawServo.setPosition(0);
     }
 }
