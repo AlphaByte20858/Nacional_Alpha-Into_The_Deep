@@ -7,6 +7,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.hardware.Constraints;
 import org.firstinspires.ftc.teamcode.interfaces.SubsystemBase;
@@ -20,7 +21,7 @@ public class ArmSubsystem implements SubsystemBase {
     private PIDController controller;
     Constraints.ArmConstraints consts = new Constraints.ArmConstraints();
     public int target;
-
+ElapsedTime timer = new ElapsedTime();
     int armPosition;
     double pid,ff;
     double error;
@@ -54,7 +55,7 @@ public class ArmSubsystem implements SubsystemBase {
     public void setPidTarget(int targetVal){
         this.target = targetVal;
         controller.setPID(consts.kp, consts.ki, consts.kd);
-        int positionArm = Robot.Arm.getCurrentPosition();
+        int positionArm = Robot.armEncoder.getCurrentPosition();
         double pid = controller.calculate(positionArm, targetVal);
         double ff = Math.cos(Math.toRadians(targetVal / consts.ticksInDegree)) * consts.kf;
 
@@ -74,7 +75,7 @@ public class ArmSubsystem implements SubsystemBase {
 
     }
     public double getEncoderValue(){
-        return Robot.Arm.getCurrentPosition();
+        return Robot.armEncoder.getCurrentPosition();
     };
 
 
@@ -83,8 +84,9 @@ public class ArmSubsystem implements SubsystemBase {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
                 error = getEncoderValue() - consts.highPosition;
-                if (Math.abs(error) > consts.errorMargin){
+                if ((Math.abs(error) > consts.errorMargin)){
                     setPidTarget(consts.highPosition);
+                    telemetryPacket.addLine("Está pidando");
                 }
                 else{
                     setStop();
@@ -102,7 +104,6 @@ public class ArmSubsystem implements SubsystemBase {
                 if (Math.abs(error) > consts.errorMargin) {
                     setPidTarget(consts.lowPosition);
                 } else {
-                    setStop();
                     return false;
                 }
                 return true;
@@ -118,7 +119,6 @@ public class ArmSubsystem implements SubsystemBase {
                     setPidTarget(consts.midPosition);
                 }
                 else{
-                    setStop();
                     return false;
                 }
                 return true;
@@ -132,6 +132,7 @@ public class ArmSubsystem implements SubsystemBase {
                 error = getEncoderValue() - consts.sampleGet;
                 if (Math.abs(error) > consts.errorMargin){
                     setPidTarget(consts.sampleGet);
+                    telemetryPacket.addLine("Position" + getEncoderValue());
                 }
                 else{
                     return false;
@@ -147,6 +148,7 @@ public class ArmSubsystem implements SubsystemBase {
                 error = getEncoderValue() - consts.samplePut;
                 if (Math.abs(error) > consts.errorMargin){
                     setPidTarget(consts.samplePut);
+                    telemetryPacket.addLine("Position" + getEncoderValue());
                 }
                 else{
                     return false;

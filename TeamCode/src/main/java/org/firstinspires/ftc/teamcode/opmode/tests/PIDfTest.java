@@ -17,12 +17,14 @@ import org.firstinspires.ftc.teamcode.hardware.subsytems.ElevatorSubsystem;
 @Config
 @TeleOp
 public class PIDfTest extends OpMode {
+    public final int motorEncoder = 28;
+    public final double motorReduction = (5*4*3);
     private PIDController controller;
-    public static double p = -0.0005, i = 0, d = -0.000009;
+    public static double p = -0.0009, i = 0, d = -0.000012;
     public static double f =  0.00005;
     public static int target;
 
-    private final double ticksInDegree = 8192 / 360;
+    private final double ticksInDegree = (motorEncoder* motorReduction)/180;
     DcMotorEx arm,armEncoder;
     @Override
     public void init(){

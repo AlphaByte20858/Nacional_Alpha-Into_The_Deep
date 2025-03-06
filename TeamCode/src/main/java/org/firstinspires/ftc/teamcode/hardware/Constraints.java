@@ -23,16 +23,16 @@ public class Constraints {
         public final double motorReduction = (5*4*3);
         public final int motorRPM = 6000;
 
-        public final static double kp = -0.0005, ki = 0, kd = -0.000009, kf = 0.00005;
+        public final static double kp = -0.0002, ki = 0, kd = -0.000033, kf = 0.00005;
         public final double ticksInDegree = (motorEncoder * motorReduction)/180;
 
         //todo: refazer as posições
         public final int highPosition = 30;
-        public final int midPosition = -200;
-        public final int lowPosition = -390;
-        public final int sampleGet = -630;
-        public final int samplePut = -180;
-        public int errorMargin = 3;
+        public final int midPosition = 400;
+        public final int lowPosition = 1800;
+        public final int sampleGet = 2100;
+        public final int samplePut = 400;
+        public int errorMargin = 100;
     }
     public static class ClawConstraints{
 

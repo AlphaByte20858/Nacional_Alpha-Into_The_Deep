@@ -14,7 +14,7 @@ public class RobotHardware {
 
 
     OpMode opMode;
-    public DcMotorEx MDT, MDF, MET, MEF, LSi, LSii, Arm;
+    public DcMotorEx MDT, MDF, MET, MEF, LSi, LSii, Arm, armEncoder;
     double axial, lateral, yaw,angle;
     public Servo wristServo, clawServo; //Define o nome dos servos no sistema
     public IMU imu;
@@ -60,12 +60,15 @@ public class RobotHardware {
         wristServo.setPosition(0);
         clawServo.setPosition(0);
         Arm = opMode.hardwareMap.get(DcMotorEx.class, "braço");
+        armEncoder = opMode.hardwareMap.get(DcMotorEx.class, "armEncoder");
         Arm.setDirection(DcMotorSimple.Direction.REVERSE);
+        armEncoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        armEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //define o meio de "freio" para os motores
-        Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         imu = opMode.hardwareMap.get(IMU.class,"imu");
         RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
                 RevHubOrientationOnRobot.LogoFacingDirection.UP;
