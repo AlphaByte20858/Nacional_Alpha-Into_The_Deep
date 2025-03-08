@@ -18,7 +18,7 @@ public class ElevatorSubsystem implements SubsystemBase {
     RobotHardware Robot;
     int encoderPosition;
     private PIDController controller;
-    public static double p = 0.045, i = 0, d = 0.0002;
+    public static double p = 0.035, i = 0, d = 0.0002;
     public static double f = 0.15;
     public int target;
     double pid,ff;
@@ -60,7 +60,7 @@ public class ElevatorSubsystem implements SubsystemBase {
     public void setPidTarget(int valueTarget){
         this.target = valueTarget;
         controller.setPID(p, i, d);
-        int elevatorPosition = Robot.LSi.getCurrentPosition();
+        int elevatorPosition = (Robot.LSi.getCurrentPosition() + Robot.LSii.getCurrentPosition())/2;
         pid = controller.calculate(elevatorPosition, valueTarget);
         ff = Math.cos(Math.toRadians(this.target / ticksInDegree)) * f;
 

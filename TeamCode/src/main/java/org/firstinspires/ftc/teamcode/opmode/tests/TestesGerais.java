@@ -10,6 +10,7 @@ import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.hardware.robot.RobotHardware;
@@ -42,7 +43,7 @@ public class TestesGerais extends LinearOpMode {
 
         linearHigh = elevador.setHighPosition();
         linearLow = elevador.setLowPosition();
-        armHigh = arm.setHighPosition();
+        armHigh = arm.clipChamber();
         armLow = arm.setLowPosition();
 
         splinei = peixinho.actionBuilder(new Pose2d(0, 0, Math.toRadians(0)))
@@ -78,7 +79,7 @@ public class TestesGerais extends LinearOpMode {
                 .build();
 
         plusTwo = peixinho.actionBuilder(new Pose2d(0, -15, Math.toRadians(-90)))
-                .splineToLinearHeading(new Pose2d(29, 18, Math.toRadians(0)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(27, 18, Math.toRadians(0)), Math.toRadians(0))
                 .build();
 
         robot.clawServo.setPosition(0.5);
@@ -93,9 +94,9 @@ public class TestesGerais extends LinearOpMode {
                 ajeita,
                 samplei,
                 armLow,
-                new InstantAction(() -> {sleep(300);}),
-                new InstantAction(() -> {robot.clawServo.setPosition(0.16);}),
-                new InstantAction(() -> {sleep(300);}),
+                new InstantAction(() -> {sleep(200);}),
+                new InstantAction(() -> {robot.clawServo.setPosition(0.4);}),
+                new InstantAction(() -> {sleep(200);}),
                 armHigh
                 ));
 
@@ -115,8 +116,9 @@ public class TestesGerais extends LinearOpMode {
         tempo.reset();
         Actions.runBlocking(armLow);
         //garra ang 6 pos 0.64
+        sleep(400);
         robot.clawServo.setPosition(0.5);
-        sleep(100);
+        sleep(200);
         robot.wristServo.setPosition(0);
         Actions.runBlocking(new SequentialAction(new ParallelAction(plusTwo,
                 armHigh)));

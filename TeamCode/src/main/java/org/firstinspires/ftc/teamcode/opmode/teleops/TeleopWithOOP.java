@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.hardware.subsytems.ClawSubystem;
 import org.firstinspires.ftc.teamcode.hardware.subsytems.DriveBaseSubsytem;
 import org.firstinspires.ftc.teamcode.hardware.subsytems.ElevatorSubsystem;
 
-@TeleOp
+@TeleOp(name = "Astrid")
 public class TeleopWithOOP extends OptimizedOpMode {
 
     RobotHardware Robot;

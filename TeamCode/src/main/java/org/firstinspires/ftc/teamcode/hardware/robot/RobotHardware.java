@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 @Disabled
@@ -14,7 +13,7 @@ public class RobotHardware {
 
 
     OpMode opMode;
-    public DcMotorEx MDT, MDF, MET, MEF, LSi, LSii, Arm, armEncoder;
+    public DcMotorEx MDT, MDF, MET, MEF, LSi, LSii, arm, armEncoder;
     double axial, lateral, yaw,angle;
     public Servo wristServo, clawServo; //Define o nome dos servos no sistema
     public IMU imu;
@@ -59,14 +58,13 @@ public class RobotHardware {
         clawServo = opMode.hardwareMap.get(Servo.class, "garra");
         wristServo.setPosition(0);
         clawServo.setPosition(0);
-        Arm = opMode.hardwareMap.get(DcMotorEx.class, "braço");
+        arm = opMode.hardwareMap.get(DcMotorEx.class, "braço");
         armEncoder = opMode.hardwareMap.get(DcMotorEx.class, "armEncoder");
-        Arm.setDirection(DcMotorSimple.Direction.REVERSE);
-        armEncoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         armEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armEncoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        arm.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //define o meio de "freio" para os motores
         imu = opMode.hardwareMap.get(IMU.class,"imu");

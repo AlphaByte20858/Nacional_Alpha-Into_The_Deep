@@ -7,6 +7,8 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.hardware.Constraints;
@@ -21,6 +23,7 @@ public class ArmSubsystem implements SubsystemBase {
     private PIDController controller;
     Constraints.ArmConstraints consts = new Constraints.ArmConstraints();
     public int target;
+    DcMotorEx arm, armEncoder;
 ElapsedTime timer = new ElapsedTime();
     int armPosition;
     double pid,ff;
@@ -32,23 +35,20 @@ ElapsedTime timer = new ElapsedTime();
     public void init(){
         controller = new PIDController(consts.kp, consts.ki, consts.kd);
 
-        Robot.Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Robot.Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
     }
 
     public void periodic() {
-        armPosition = Robot.Arm.getCurrentPosition();
+        armPosition = Robot.arm.getCurrentPosition();
     }
     public void manualControl(boolean UpBotton, boolean DownBotton){
         if (UpBotton){
-            Robot.Arm.setPower(0.14);
+            Robot.arm.setPower(0.14);
         }
         else if (DownBotton){
-            Robot.Arm.setPower(-0.14);
+            Robot.arm.setPower(-0.14);
         }
         else {
-            Robot.Arm.setPower(0);
+            Robot.arm.setPower(0);
         }
     }
 
@@ -60,7 +60,7 @@ ElapsedTime timer = new ElapsedTime();
         double ff = Math.cos(Math.toRadians(targetVal / consts.ticksInDegree)) * consts.kf;
 
         double power = pid + ff;
-        Robot.Arm.setPower(power);
+        Robot.arm.setPower(power);
     }
 
     public void setStop(){
@@ -70,14 +70,15 @@ ElapsedTime timer = new ElapsedTime();
 
         double power = ff;
 
-
-        Robot.Arm.setPower(power);
+        Robot.arm.setPower(power);
 
     }
     public double getEncoderValue(){
         return Robot.armEncoder.getCurrentPosition();
     };
-
+    public double getPowerValue(){
+        return Robot.arm.getPower();
+    }
 
     public Action setHighPosition(){
         return new Action() {
@@ -86,7 +87,7 @@ ElapsedTime timer = new ElapsedTime();
                 error = getEncoderValue() - consts.highPosition;
                 if ((Math.abs(error) > consts.errorMargin)){
                     setPidTarget(consts.highPosition);
-                    telemetryPacket.addLine("Está pidando");
+                    telemetryPacket.addLine("Está ");
                 }
                 else{
                     setStop();
@@ -135,6 +136,7 @@ ElapsedTime timer = new ElapsedTime();
                     telemetryPacket.addLine("Position" + getEncoderValue());
                 }
                 else{
+                    setStop();
                     return false;
                 }
                 return true;
@@ -151,6 +153,25 @@ ElapsedTime timer = new ElapsedTime();
                     telemetryPacket.addLine("Position" + getEncoderValue());
                 }
                 else{
+                    setStop();
+                    return false;
+                }
+                return true;
+            }
+        };
+    }
+
+    public Action clipChamber(){
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                error = getEncoderValue() - consts.clipPosition;
+                if (Math.abs(error) > consts.errorMargin){
+                    setPidTarget(consts.clipPosition);
+                    telemetryPacket.addLine("Position" + getEncoderValue());
+                }
+                else{
+                    setStop();
                     return false;
                 }
                 return true;
