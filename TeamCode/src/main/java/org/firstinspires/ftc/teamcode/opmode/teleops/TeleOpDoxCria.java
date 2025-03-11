@@ -7,20 +7,30 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.hardware.robot.RobotHardware;
+import org.firstinspires.ftc.teamcode.hardware.subsytems.DriveBaseSubsytem;
+
 @TeleOp(name = "molhadinhos")
 public class TeleOpDoxCria extends OpMode {
     DcMotorEx MDT, MDF, MET, MEF, LSi, LSii, braço;
-    double axial, lateral, yaw,angle;
+    double angle, axial, lateral, yaw;
     Servo yawC, garra; //Define o nome dos servos no sistema
-    boolean yawG, raw;
+    boolean yawG, raw, motionType;
     ElapsedTime f = new ElapsedTime(); //define contador de tempo para as funções
     ElapsedTime tempo = new ElapsedTime(); // define  o contador do tempo decorrido para o PID
 
     IMU imu;
+    boolean isOrientedTrue = false;
+
+    double yawBase = 0, yawChanged = 0.37;
+
     public void init() {
         MET = hardwareMap.get(DcMotorEx.class, "MET");
         MDT = hardwareMap.get(DcMotorEx.class, "MDT");
@@ -58,8 +68,6 @@ public class TeleOpDoxCria extends OpMode {
         MET.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         MEF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-
-
         // Orientação do Control Hub/Expansion Hub
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.LEFT;
@@ -71,6 +79,7 @@ public class TeleOpDoxCria extends OpMode {
         braço.setDirection(DcMotorSimple.Direction.REVERSE);
         yawC.setPosition(0);
         garra.setPosition(0.5);
+        motionType = true;
         yawG = false;
         raw = true;
 
@@ -90,6 +99,28 @@ public class TeleOpDoxCria extends OpMode {
     }
 
     public void loop(){
+        if (gamepad1.left_bumper && motionType){
+            motionType = false;
+        }
+        else if (gamepad1.left_bumper && !motionType){
+            motionType = true;
+        }
+        movi();
+        linear(); //função do sistema linear
+        arm(); //função do braço
+        Crvos(); // função dos servos
+    }
+    public void movi(){
+        telemetry.addData("Robot + field centric", motionType);
+        if (motionType){
+            defaultMove();
+        }
+        else{
+            centricMove();
+        }
+    }
+
+    public void defaultMove(){
         axial   = (gamepad1.right_trigger - gamepad1.left_trigger)* 0.8;
         lateral = gamepad1.left_stick_x * 0.8;
         yaw     =  gamepad1.right_stick_x * 0.6;
@@ -110,9 +141,47 @@ public class TeleOpDoxCria extends OpMode {
         else {
             MotorsPower(motorEsquerdoFf, motorDireitoFf, motorEsquerdoTf, motorDireitoTf);
         }
-        linear(); //função do sistema linear
-        arm(); //função do braço
-        Crvos(); // função dos servos
+    }
+    public void centricMove(){
+        robotGyroMove(gamepad1.right_trigger-gamepad1.left_trigger,gamepad1.left_stick_x, gamepad1.right_stick_x);
+    }
+    public void robotGyroMove(float axialPower, float lateralPower, float yawPower){
+        axial = axialPower * 0.8;
+        lateral = lateralPower;
+        yaw = yawPower *0.7;
+
+        if((yaw!=0) && (!isOrientedTrue)) {
+            isOrientedTrue= true;
+            imu.resetYaw();
+        }
+        if (isOrientedTrue){
+            fieldOriented(axial,lateral);
+        }
+        if((yaw==0) && (isOrientedTrue)) {
+            isOrientedTrue= false;
+        }
+
+
+        double absaxial = Math.abs(axial);
+        double abslateral = Math.abs(lateral);
+        double absyaw= Math.abs(yaw);
+        double denominador = Math.max(absaxial + abslateral + absyaw, 1);
+        double motorEsquerdoFf = ((axial + lateral + yaw) / denominador);
+        double motorDireitoFf = ((axial - lateral - yaw) / denominador);
+        double motorEsquerdoTf = ((axial - lateral + yaw) / denominador);
+        double motorDireitoTf = ((axial + lateral - yaw) / denominador);
+
+        MotorsPower(motorEsquerdoFf, motorDireitoFf, motorEsquerdoTf, motorDireitoTf);
+    }
+    private void fieldOriented(double driveP, double turnP) {
+        angle = gyroCalculate();
+        axial = driveP * Math.cos(angle) - turnP * Math.sin(angle);
+        lateral = driveP * Math.sin(angle) + turnP * Math.cos(angle);
+    }
+
+    private double gyroCalculate() {
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        return orientation.getYaw(AngleUnit.RADIANS);
     }
 
     public void MotorsPower(double p1, double p2, double p3,double p4){
@@ -121,28 +190,18 @@ public class TeleOpDoxCria extends OpMode {
         MET.setPower(p3);
         MDT.setPower(p4);
     }
-    /*ADD depois das correções
-    private void çfieldOriented(double driveP, double turnP) {
-        angle = gyroCalculate();
-        axial = driveP * Math.cos(angle) - turnP * Math.sin(angle);
-        lateral = driveP * Math.sin(angle) + turnP * Math.cos(angle);
-    }
 
-    // Função que retorna a orientação do robô em graus
-    private double gyroCalculate() {
-        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        return orientation.getYaw(AngleUnit.RADIANS);
-    }*/
     public void Crvos(){
         //Angulação da garra
         if (gamepad2.y && f.seconds() >= 0.3){
             if (!yawG){
-                yawC.setPosition(0.37);
+                yawC.setPosition(yawChanged);
                 yawG = true;
             }
-            else if (yawG == true){
-                yawC.setPosition(0);
+            else if (yawG){
+                yawC.setPosition(yawBase);
                 yawG = false;
+                yawChanged = 0.37;
             }
             f.reset();
         }
@@ -150,7 +209,7 @@ public class TeleOpDoxCria extends OpMode {
         //Abrir/fechar a garra
         if (gamepad2.x && f.seconds() >= 0.5){
             if (raw == true){
-                garra.setPosition(0.5);
+                garra.setPosition(0.7);
                 raw = false;
             }
             else if (!raw) {

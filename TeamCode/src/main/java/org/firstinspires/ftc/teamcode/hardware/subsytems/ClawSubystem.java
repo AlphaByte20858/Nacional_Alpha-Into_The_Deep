@@ -57,7 +57,7 @@ public class ClawSubystem implements SubsystemBase {
     }
     public Action setClawClosed(){
         return new InstantAction(() -> {
-            Robot.clawServo.setPosition(0);
+            Robot.clawServo.setPosition(0.6);
         });
     }
     public Action setWrist90(){

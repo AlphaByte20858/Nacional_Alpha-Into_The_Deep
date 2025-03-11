@@ -97,6 +97,50 @@ ElapsedTime timer = new ElapsedTime();
             }
         };
     }
+    public Action setHighPositionI(){
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                error = getEncoderValue() - consts.highPositionI;
+                if ((Math.abs(error) > consts.errorMargin)){
+                    setPidTarget(consts.highPositionI);
+                    telemetryPacket.addLine("Está ");
+                }
+                else{
+                    setStop();
+                    return false;
+                }
+                return true;
+            }
+        };
+    }
+    public Action setHighPositionII(){
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                error = getEncoderValue() - consts.highPositionII;
+                if ((Math.abs(error) > consts.errorMargin)){
+                    setPidTarget(consts.highPositionII);
+                    telemetryPacket.addLine("Está ");
+                }
+                else{
+                    setStop();
+                    return false;
+                }
+                return true;
+            }
+        };
+    }
+    public Action setInitialPos(){
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                Robot.arm.setPower(0.5);
+                return false;
+            }
+        };
+    }
+
     public Action setLowPosition() {
         return new Action() {
             @Override
@@ -105,6 +149,7 @@ ElapsedTime timer = new ElapsedTime();
                 if (Math.abs(error) > consts.errorMargin) {
                     setPidTarget(consts.lowPosition);
                 } else {
+                    setStop();
                     return false;
                 }
                 return true;

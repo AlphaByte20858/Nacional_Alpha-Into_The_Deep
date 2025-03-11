@@ -99,7 +99,6 @@ public class ElevatorSubsystem implements SubsystemBase {
                     setPidTarget(consts.highPosition);
                 }
                 else{
-                    setStop();
                     return false;
                 }
                 return true;
@@ -132,7 +131,25 @@ public class ElevatorSubsystem implements SubsystemBase {
                     setPidTarget(consts.lowPosition);
                 }
                 else{
-                    setStop();
+                    Robot.LSii.setPower(0);
+                    Robot.LSi.setPower(0);
+                    return false;
+                }
+                return true;
+            }
+        };
+    }
+    public Action setPitLowPosition(){
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                error = getEncoderValue() - 500;
+                if (Math.abs(error) > consts.errorMargin){
+                    setPidTarget(consts.lowPosition);
+                }
+                else{
+                    Robot.LSii.setPower(0);
+                    Robot.LSi.setPower(0);
                     return false;
                 }
                 return true;

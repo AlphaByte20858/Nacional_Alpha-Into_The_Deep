@@ -28,10 +28,13 @@ public class Constraints {
 
         //todo: refazer as posições
         public final int highPosition = -50;
+        public final int highPositionI = -80;
+
+        public final int highPositionII = -120;
         public final int clipPosition = -100;
         public final int midPosition = 400;
-        public final int lowPosition = 2000;
-        public final int sampleGet = 2100;
+        public final int lowPosition = 1800;
+        public final int sampleGet = 1800;
         public final int samplePut = 440;
         public int errorMargin = 100;
     }

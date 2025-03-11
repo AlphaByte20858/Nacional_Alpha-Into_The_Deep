@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode.opmode.teleops;
 
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.interfaces.OptimizedOpMode;
+import org.firstinspires.ftc.teamcode.interfaces.OptimizedTeleOp;
 import org.firstinspires.ftc.teamcode.hardware.robot.RobotHardware;
 import org.firstinspires.ftc.teamcode.hardware.robot.RobotTelemetry;
 import org.firstinspires.ftc.teamcode.hardware.subsytems.ArmSubsystem;
@@ -12,7 +16,7 @@ import org.firstinspires.ftc.teamcode.hardware.subsytems.DriveBaseSubsytem;
 import org.firstinspires.ftc.teamcode.hardware.subsytems.ElevatorSubsystem;
 
 @TeleOp(name = "Astrid")
-public class TeleopWithOOP extends OptimizedOpMode {
+public class TeleopWithOOP extends OptimizedTeleOp {
 
     RobotHardware Robot;
     ArmSubsystem Arm;
@@ -57,10 +61,15 @@ public class TeleopWithOOP extends OptimizedOpMode {
     public void gamepad2Keybinds() {
         Elevator.manualControl(gamepad2.right_trigger, gamepad2.left_trigger);
         Arm.manualControl(gamepad2.right_bumper, gamepad2.left_bumper);
-        if (gamepad2.dpad_up){
-            Elevator.setPidTarget(-1900);
-        }
+        Claw.manualControl(gamepad2.y,gamepad2.x);
 
+        if (gamepad2.a){
+            Actions.runBlocking(getSample());
+        }
+    }
+
+    public Action getSample(){
+        return new SequentialAction(Elevator.setLowPosition(), new SleepAction(0.4),Claw.setClawOpen(),Elevator.setPitLowPosition());
     }
 
 }

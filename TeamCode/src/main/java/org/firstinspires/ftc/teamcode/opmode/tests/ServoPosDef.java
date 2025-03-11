@@ -37,6 +37,7 @@ public class ServoPosDef extends OpMode {
                 pos = pos - 0.01;
                 servo.setPosition(pos);
             }
+
         timing.reset();
         }
         telemetry.addData("posição servo:", servo.getPosition());

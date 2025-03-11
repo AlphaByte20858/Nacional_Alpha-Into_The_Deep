@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.interfaces;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-public abstract class OptimizedOpMode extends OpMode {
+public abstract class OptimizedTeleOp extends OpMode {
     @Override
     public abstract void init();
 
