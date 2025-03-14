@@ -7,16 +7,9 @@ import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.hardware.robot.RobotHardware;
@@ -24,10 +17,11 @@ import org.firstinspires.ftc.teamcode.hardware.subsytems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.hardware.subsytems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
-@Autonomous (name = "Soluço", group = "LinearOpMode")
-public class AutoDireita extends LinearOpMode {
+@Autonomous(name = "Soluço", group = "LinearOpMode")
+public class AutoDireitaNew extends LinearOpMode {
+    @Override
+    public void runOpMode(){
 
-    public void runOpMode() {
         RobotHardware robot = new RobotHardware(this);
         ElevatorSubsystem elevador = new ElevatorSubsystem(robot);
         ArmSubsystem arm = new ArmSubsystem(robot);
@@ -39,7 +33,7 @@ public class AutoDireita extends LinearOpMode {
 
 
         Action get2, plusOne, plusTwo, splinei, splineii, ajeita, samplei; //actions trajetória
-        Action linearHigh, linearLow, armHigh, armLow;
+        Action linearHigh, linearLow, armLow;
 
         arm.init();
         elevador.init();
@@ -49,12 +43,11 @@ public class AutoDireita extends LinearOpMode {
 
         linearHigh = elevador.setHighPosition();
         linearLow = elevador.setLowPosition();
-        armHigh = arm.setHighPosition();
         armLow = arm.setLowPosition();
 
         splinei = peixinho.actionBuilder(new Pose2d(0, 0, Math.toRadians(0)))
                 .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(29, 10, Math.toRadians(0)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(30, 10, Math.toRadians(0)), Math.toRadians(0))
                 .build();
 
         splineii = peixinho.actionBuilder(new Pose2d(20, 34, Math.toRadians(0)))
@@ -93,7 +86,8 @@ public class AutoDireita extends LinearOpMode {
         arm.setPidTarget(0);
         robot.wristServo.setPosition(0);
         waitForStart();
-        Actions.runBlocking(new SequentialAction(armHigh, splinei, new ParallelAction(linearHigh, armHigh)));
+        robot.arm.setPower(0.5);
+        Actions.runBlocking(new SequentialAction(splinei, linearHigh));
         robot.clawServo.setPosition(0);
         sleep(200);
         Actions.runBlocking(new SequentialAction(linearLow, splineii,
@@ -101,13 +95,13 @@ public class AutoDireita extends LinearOpMode {
                 samplei,
                 armLow,
                 new InstantAction(() -> {sleep(200);}),
-                new InstantAction(() -> {robot.clawServo.setPosition(0.4);}),
-                new InstantAction(() -> {sleep(200);}),
-                armHigh
+                new InstantAction(() -> {robot.clawServo.setPosition(0.5);}),
+                new InstantAction(() -> {sleep(200);})
         ));
+        robot.arm.setPower(0.4);
 
-        Actions.runBlocking(new SequentialAction(armHigh,
-                new InstantAction(() -> {robot.wristServo.setPosition(0.7);}),
+        Actions.runBlocking(new SequentialAction(
+                new InstantAction(() -> {robot.wristServo.setPosition(0.67);}),
                 plusOne,
                 linearHigh
         ));
@@ -126,8 +120,8 @@ public class AutoDireita extends LinearOpMode {
         robot.clawServo.setPosition(0.5);
         sleep(200);
         robot.wristServo.setPosition(0);
-        Actions.runBlocking(new SequentialAction(new ParallelAction(plusTwo,
-                armHigh)));
+        robot.arm.setPower(0.4);
+        Actions.runBlocking(new SequentialAction(plusTwo));
         robot.wristServo.setPosition(0);
         tempo.reset();
         Actions.runBlocking(linearHigh);

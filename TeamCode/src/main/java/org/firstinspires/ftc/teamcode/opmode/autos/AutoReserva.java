@@ -1,5 +1,14 @@
 package org.firstinspires.ftc.teamcode.opmode.autos;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.ParallelAction;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,143 +17,128 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.hardware.robot.RobotHardware;
+import org.firstinspires.ftc.teamcode.hardware.subsytems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.hardware.subsytems.ElevatorSubsystem;
+import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
+
 @Autonomous(name = "AutoReserva", group = "LinearOpMode")
 public class AutoReserva extends LinearOpMode {
-    public DcMotorEx MEF, MET, MDF, MDT, LSi, LSii, braço;
-    public Servo garra;
- /*   BNO055IMU imu;
-
-    public static PIDCoefficients pidCoeffs = new PIDCoefficients(0, 0, 0);
-    public PIDCoefficients pidGains = new PIDCoefficients(0, 0, 0);
-
-    public static PIDCoefficients pidCoeffs1 = new PIDCoefficients(0, 0, 0);
-    public PIDCoefficients pidGains1 = new PIDCoefficients(0, 0, 0);
-
-    public static PIDCoefficients pidCoeffs2 = new PIDCoefficients(0, 0, 0);
-    public PIDCoefficients pidGains2 = new PIDCoefficients(0, 0, 0);
-
-    public static PIDCoefficients pidCoeffs3 = new PIDCoefficients(0, 0, 0);
-    public PIDCoefficients pidGains3 = new PIDCoefficients(0, 0, 0);
-
-
-    double integral = 0;
-    double error = 0;
-    double currvel = 0;
-    double derivate = 0;
-    double deltaError = 0;
-    private double lastError = 0;
-
-    double integral1 = 0;
-    double error1 = 0;
-    double currvel1 = 0;
-    double derivate1 = 0;
-    double deltaError1 = 0;
-    private double lastError1 = 0;
-
-    double integral2 = 0;
-    double error2 = 0;
-    double currvel2 = 0;
-    double derivate2 = 0;
-    double deltaError2 = 0;
-    private double lastError2 = 0;
-
-    double integral3 = 0;
-    double error3 = 0;
-    double currvel3 = 0;
-    double derivate3 = 0;
-    double deltaError3 = 0;
-    private double lastError3 = 0;
-*/
-
-    ElapsedTime tempo = new ElapsedTime();
-
-
     @Override
     public void runOpMode() {
-        LSi = hardwareMap.get(DcMotorEx.class, "LSi");
-        LSii = hardwareMap.get(DcMotorEx.class, "LSii");
-        braço = hardwareMap.get(DcMotorEx.class, "braço");
-        garra = hardwareMap.get(Servo.class, "garra");
 
-        MEF = hardwareMap.get(DcMotorEx.class, "MEF");
-        MDF = hardwareMap.get(DcMotorEx.class, "MDF");
-        MET = hardwareMap.get(DcMotorEx.class, "MET");
-        MDT = hardwareMap.get(DcMotorEx.class, "MDT");
+        RobotHardware robot = new RobotHardware(this);
+        ElevatorSubsystem elevador = new ElevatorSubsystem(robot);
+        ArmSubsystem arm = new ArmSubsystem(robot);
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
-        braço.setDirection(DcMotorSimple.Direction.REVERSE);
-        LSi.setDirection(DcMotorSimple.Direction.REVERSE);
+        MecanumDrive peixinho = new MecanumDrive(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)));
 
-        LSi.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        LSii.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Action basket1, basket2, basket3, sample1, sample2, sample3, basket4;
+        Action linearBasket, linearLow, armGet, armHigh, armPut, armStop;
 
-        modemoto(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        modemoto(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        linearBasket = elevador.setBasketPosition();
+        linearLow = elevador.setLowPosition();
+        armHigh = arm.setInitialPos();
+        armStop = arm.setZeroPos();
+        armGet = arm.getSample();
+        armPut = arm.putSample();
 
-        MEF.setDirection(DcMotorEx.Direction.REVERSE);
-        MDF.setDirection(DcMotorEx.Direction.FORWARD);
-        MET.setDirection(DcMotorEx.Direction.REVERSE);
-        MDT.setDirection(DcMotorEx.Direction.FORWARD);
 
-        garra.setPosition(0.15);
+        basket1 = peixinho.actionBuilder(new Pose2d(0,0, Math.toRadians(0)))
+                .splineToSplineHeading(new Pose2d(4, 39, Math.toRadians(135)), Math.toRadians(135))
+                .build();
 
-        resetRuntime();
+        sample1 = peixinho.actionBuilder(new Pose2d(13, 45, Math.toRadians(135)))
+                .setTangent(Math.toRadians(-45))
+                .splineToLinearHeading(new Pose2d(18, 33, Math.toRadians(0)), Math.toRadians(0))
+                .build();
+
+        basket2 = peixinho.actionBuilder(new Pose2d(13, 29, Math.toRadians(0)))
+                .setTangent(Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(8, 42, Math.toRadians(145)), Math.toRadians(145))
+                .build();
+
+        sample2 = peixinho.actionBuilder(new Pose2d(8, 42, Math.toRadians(145)))
+                .setTangent(Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(18, 43, Math.toRadians(360)), Math.toRadians(360))
+                .build();
+
+        basket3 = peixinho.actionBuilder(new Pose2d(11, 37, Math.toRadians(0)))
+                .splineToLinearHeading(new Pose2d(6, 44, Math.toRadians(145)), Math.toRadians(145))
+                .build();
+
+        sample3 = peixinho.actionBuilder(new Pose2d(11, 33, Math.toRadians(145)))
+                .splineToLinearHeading(new Pose2d(39, 36, Math.toRadians(90)), Math.toRadians(90))
+                .build();
+
+        basket4 = peixinho.actionBuilder(new Pose2d(29, 28, Math.toRadians(90)))
+                .splineToLinearHeading(new Pose2d(6,44, Math.toRadians(145)), Math.toRadians(145))
+                .build();
+
+        arm.init();
+        elevador.init();
+        robot.clawServo.setPosition(0.7);
         waitForStart();
 
-        if (opModeIsActive()) {
-            allMotorsPower(-0.1, 0.1, 0.1,-0.1);
-            esperar(1);
-            allMotorsPower(0,0,0,0);
-            esperar(2);
-            allMotorsPower(-0.05,-0.05,-0.05,-0.05);
-            esperar(1);
-            braço.setPower(0.7);
-            allMotorsPower(0,0,0,0);
-            esperar(2);
-            braço.setPower(0);
-            linearPower(0.73);
-            esperar(1);
-            linearPower(0);
-            esperar(2);
-            braço.setPower(-0.3);
-            esperar(1);
-            braço.setPower(0);
-            linearPower(-0.3);
-            esperar(1);
-           /* allMotorsPower(-0.5, -0.5, -0.5, -0.5);
-            esperar(1);
-            allMotorsPower(0, 0, 0, 0);
-            sleep(3000);
-            linearPower(-0.2);
-            esperar(1);*/
-            garra.setPosition(0);
-            esperar(1);
-            linearPower(0);
+        arm.periodic();
+        elevador.periodic();
+        Actions.runBlocking(new SequentialAction(
+                new ParallelAction(
+                        basket1, linearBasket, armHigh),
+                armPut));
+        robot.clawServo.setPosition(0);
+        sleep(400);
+        Actions.runBlocking(new SequentialAction(
+                armHigh,
+                sample1,
+                linearLow));
+        Actions.runBlocking(new SequentialAction(
+                new ParallelAction(linearLow, armGet)));
+        robot.clawServo.setPosition(0.7);
+        sleep(400);
+        Actions.runBlocking(new SequentialAction(armHigh,
+                new ParallelAction(basket2, linearBasket),
+                armStop,
+                armPut));
+        robot.clawServo.setPosition(0);
+        sleep(300);
+
+        Actions.runBlocking(new SequentialAction(armHigh,
+                new ParallelAction(sample2, linearLow),
+                armGet,
+                new InstantAction(() -> {
+                    robot.clawServo.setPosition(0.7);
+                }),
+                new SleepAction(0.4),
+                armHigh,
+                new SleepAction(0.5)));
+        Actions.runBlocking(new SequentialAction(new ParallelAction(basket3, linearBasket),
+                armStop,
+                armPut,
+                new InstantAction(() -> {
+                    robot.clawServo.setPosition(0);
+                })));
+        sleep(200);
 
 
-        }
-    }
+        Actions.runBlocking(new SequentialAction(
+                armHigh,
+                sample3,
+                new InstantAction(() -> {
+                    robot.wristServo.setPosition(0.37);
+                }),
+                linearLow));
 
-    public void esperar(double temp){
-        tempo.reset();
-        while (tempo.seconds() < temp){
-
-        }
-    }
-    public void allMotorsPower(double paMEF, double paMDF, double paMET, double paMDT){
-        MEF.setPower(paMEF);
-        MDF.setPower(paMDF);
-        MET.setPower(paMET);
-        MDT.setPower(paMDT);
-    }
-    public void linearPower(double paLS){
-        LSi.setPower(paLS);
-        LSii.setPower(paLS);
-    }
-
-    public void modemoto(DcMotorEx.RunMode mode){
-        MDF.setMode(mode);
-        MDT.setMode(mode);
-        MEF.setMode(mode);
-        MET.setMode(mode);
+        Actions.runBlocking(new SequentialAction(new ParallelAction(linearLow, armGet)));
+        sleep(500);
+        robot.clawServo.setPosition(0.7);
+        sleep(400);
+        robot.wristServo.setPosition(0);
+        Actions.runBlocking(new SequentialAction(new ParallelAction(basket4, linearBasket, armHigh),
+                armStop,
+                armPut));
+        robot.clawServo.setPosition(0);
     }
 }

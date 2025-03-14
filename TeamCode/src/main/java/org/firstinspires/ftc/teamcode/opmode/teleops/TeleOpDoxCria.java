@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.hardware.robot.RobotHardware;
 import org.firstinspires.ftc.teamcode.hardware.subsytems.DriveBaseSubsytem;
 
-@TeleOp(name = "molhadinhos")
+@TeleOp(name = "Tempestade")
 public class TeleOpDoxCria extends OpMode {
     DcMotorEx MDT, MDF, MET, MEF, LSi, LSii, braço;
     double angle, axial, lateral, yaw;
@@ -78,10 +78,9 @@ public class TeleOpDoxCria extends OpMode {
         LSii.setDirection(DcMotorSimple.Direction.REVERSE);
         braço.setDirection(DcMotorSimple.Direction.REVERSE);
         yawC.setPosition(0);
-        garra.setPosition(0.5);
         motionType = true;
         yawG = false;
-        raw = true;
+        raw = false;
 
         LSi.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         LSii.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -213,7 +212,7 @@ public class TeleOpDoxCria extends OpMode {
                 raw = false;
             }
             else if (!raw) {
-                garra.setPosition(0.0);
+                garra.setPosition(0.2);
                 raw = true;
             }
             f.reset();

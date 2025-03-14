@@ -141,6 +141,16 @@ ElapsedTime timer = new ElapsedTime();
         };
     }
 
+    public Action setZeroPos(){
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                Robot.arm.setPower(0);
+                return false;
+            }
+        };
+    }
+
     public Action setLowPosition() {
         return new Action() {
             @Override
